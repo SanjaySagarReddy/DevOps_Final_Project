@@ -1,4 +1,4 @@
-FROM python:3.13-slim-bookworm
+FROM python:3.13-alpine
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
@@ -7,8 +7,9 @@ WORKDIR /app
 
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt \
-    && groupadd --gid 10001 app \
-    && useradd --uid 10001 --gid 10001 --no-create-home --shell /usr/sbin/nologin app
+    && python -m pip uninstall -y pip \
+    && addgroup -S -g 10001 app \
+    && adduser -S -D -H -u 10001 -G app app
 
 COPY app ./app
 COPY alembic ./alembic
