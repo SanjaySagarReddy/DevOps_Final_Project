@@ -18,6 +18,16 @@ dist/
 playwright-report/
 test-results/
 .tools/
+secrets/
+
+# Terraform state, local providers, and private variable values
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+terraform.tfvars
+terraform.tfvars.json
+crash.log
 
 # Editor and operating system
 .idea/
