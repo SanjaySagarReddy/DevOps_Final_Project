@@ -2,7 +2,7 @@
 
 SignalDesk tracks service incidents from detection through investigation, mitigation, resolution, and reopening. Each incident has a title, affected service, severity, status, response owner, impact description, and creation, update, and resolution timestamps. The dashboard shows status totals and the latest 200 incidents, with search and filters. The detail drawer supports edits, workflow transitions, and deletion.
 
-Phases 1 and 2 of the capstone are implemented. CI/CD, Terraform, Kubernetes, monitoring deployment, and submission evidence are scheduled for later review phases.
+Phases 1 and 2 of the capstone are implemented. The phase 3 CI/CD workflow is prepared for review; it has not run on GitHub because no remote is configured. Terraform, Kubernetes, monitoring deployment, and submission evidence are scheduled for later review phases.
 
 ## Local architecture
 
@@ -34,8 +34,32 @@ The Compose database uses `POSTGRES_HOST_AUTH_METHOD=trust` only for local devel
 Stop the stack with `docker compose down`. The database volume remains. `docker compose down -v` also deletes local incident data.
 
 The backend image runs as UID 10001. The frontend uses a Node build stage and a small Nginx runtime stage, which runs as UID 101 and listens on port 8080 inside the container.
+The backend runtime uses Python on Alpine and removes pip after dependency installation, keeping build tooling out of the running container.
 
 ## Automated checks
+
+### GitHub Actions image pipeline
+
+Each push to `main` triggers [the CI workflow](.github/workflows/ci.yml). Its `verify` job installs backend test dependencies, runs the isolated pytest suite, installs frontend dependencies with `npm ci`, and builds the frontend. The `publish` job starts only after those checks pass. It builds separate backend and frontend images, then runs Trivy against each image with `HIGH,CRITICAL` severity and `--exit-code 1`. Either finding blocks GHCR login and both pushes.
+
+The image names are `ghcr.io/<owner>/<repo>-backend:<full-commit-sha>` and `ghcr.io/<owner>/<repo>-frontend:<full-commit-sha>` (lowercase owner and repo). No mutable `latest` tag is published. The publish job requests only `contents: read` and `packages: write` for the repository's `GITHUB_TOKEN`; no registry password or personal access token is stored in this repository. The Compose database's trust authentication is local development configuration and is not used by the CI jobs.
+
+To repeat the local gates from the project root, run:
+
+```powershell
+cd backend
+.\.venv\Scripts\python.exe -m pytest -v
+cd ..\frontend
+npm ci
+npm run build
+cd ..
+docker build -t signaldesk-backend:ci ./backend
+docker build -t signaldesk-frontend:ci ./frontend
+trivy image --scanners vuln --severity HIGH,CRITICAL --exit-code 1 --no-progress signaldesk-backend:ci
+trivy image --scanners vuln --severity HIGH,CRITICAL --exit-code 1 --no-progress signaldesk-frontend:ci
+```
+
+Trivy must be installed locally for those last two commands. A live Actions run and GHCR publication require a GitHub repository remote and permission to push `main`; the repository or organization must allow Actions and GHCR package writes by `GITHUB_TOKEN`.
 
 Install test dependencies in a backend virtual environment, then run the isolated API suite:
 

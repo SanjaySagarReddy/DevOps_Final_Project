@@ -17,6 +17,7 @@ dist/
 .npm-cache/
 playwright-report/
 test-results/
+.tools/
 
 # Editor and operating system
 .idea/
