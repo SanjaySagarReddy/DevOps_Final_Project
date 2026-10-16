@@ -15,6 +15,8 @@ __pycache__/
 node_modules/
 dist/
 .npm-cache/
+playwright-report/
+test-results/
 
 # Editor and operating system
 .idea/

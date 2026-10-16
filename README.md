@@ -2,7 +2,7 @@
 
 SignalDesk tracks service incidents from detection through investigation, mitigation, resolution, and reopening. Each incident has a title, affected service, severity, status, response owner, impact description, and creation, update, and resolution timestamps. The dashboard shows status totals and the latest 200 incidents, with search and filters. The detail drawer supports edits, workflow transitions, and deletion.
 
-This is phase 1 of the capstone. Docker, automated tests, CI/CD, Terraform, Kubernetes, monitoring deployment, and submission evidence are scheduled for later review phases.
+Phases 1 and 2 of the capstone are implemented. CI/CD, Terraform, Kubernetes, monitoring deployment, and submission evidence are scheduled for later review phases.
 
 ## Local architecture
 
@@ -17,7 +17,46 @@ FastAPI on :8000 ── SQLAlchemy / psycopg ── PostgreSQL on :5432
         └─ /metrics  Prometheus exposition format
 ```
 
-Requirements: Python 3.12+, Node.js 20+, npm, and a local PostgreSQL server. Run the commands from **this project folder**, not the lecturer's reference folder. PostgreSQL and `psql` must be installed and running separately for phase 1.
+For direct startup, use Python 3.12+, Node.js 20+, npm, and a local PostgreSQL server. For the container stack, use Docker Engine/Desktop and Docker Compose. Run the commands from **this project folder**, not the lecturer's reference folder.
+
+## Docker Compose startup
+
+From the project root:
+
+```powershell
+docker compose up --build
+```
+
+Open [http://localhost:3000](http://localhost:3000). Nginx serves the built React app and proxies `/api` to FastAPI. The API docs are at [http://localhost:8000/docs](http://localhost:8000/docs). PostgreSQL is kept on the private Compose network and persisted in the `postgres_data` volume. The backend runs `alembic upgrade head` before Uvicorn starts; health checks make the frontend wait until the API and database are ready.
+
+The Compose database uses `POSTGRES_HOST_AUTH_METHOD=trust` only for local development. Its port is not published to the host. Use authenticated PostgreSQL with a secret for any shared or cloud deployment.
+
+Stop the stack with `docker compose down`. The database volume remains. `docker compose down -v` also deletes local incident data.
+
+The backend image runs as UID 10001. The frontend uses a Node build stage and a small Nginx runtime stage, which runs as UID 101 and listens on port 8080 inside the container.
+
+## Automated checks
+
+Install test dependencies in a backend virtual environment, then run the isolated API suite:
+
+```powershell
+cd backend
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
+.\.venv\Scripts\python.exe -m pytest -v
+```
+
+Every pytest case creates a fresh in-memory SQLite database and overrides FastAPI's database session dependency. The suite does not connect to the PostgreSQL instance named by `DATABASE_URL`.
+
+With the Compose stack running and Google Chrome installed, run the browser checks:
+
+```powershell
+cd e2e
+npm ci
+npm test
+```
+
+Playwright checks the full incident workflow at desktop (1440px) and mobile (390px) widths. It also checks that initial API failure does not claim the queue is clear and that a failed refresh marks the previous data as stale. The browser checks create and delete their own incidents.
 
 ## Direct local startup (PowerShell)
 
@@ -86,6 +125,6 @@ resolved ──► investigating (reopen)
 
 An invalid transition returns HTTP 409. `resolved_at` is set when resolved and cleared when reopened. The initial Alembic migration creates the table and database constraints; the application does not create tables on startup.
 
-## Current local limitations
+## Current limitations
 
-Phase 1 uses a separately installed PostgreSQL server and the Vite development proxy. The Docker Compose stack and browser verification against containerized services belong to phase 2. The UI displays the latest 200 records; API pagination is available for older records. No sample incidents are fabricated or seeded.
+Direct startup needs a separately installed PostgreSQL server; Docker Compose provides one for local use. The UI displays the latest 200 records; API pagination is available for older records. No sample incidents are fabricated or seeded. Cloud deployment and live monitoring evidence are planned for later phases.
