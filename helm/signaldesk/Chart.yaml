@@ -1,0 +1,6 @@
+apiVersion: v2
+name: signaldesk
+description: SignalDesk frontend, API, and one-time database migration
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

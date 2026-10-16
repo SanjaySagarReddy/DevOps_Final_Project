@@ -2,7 +2,9 @@
 
 SignalDesk tracks service incidents from detection through investigation, mitigation, resolution, and reopening. Each incident has a title, affected service, severity, status, response owner, impact description, and creation, update, and resolution timestamps. The dashboard shows status totals and the latest 200 incidents, with search and filters. The detail drawer supports edits, workflow transitions, and deletion.
 
-Phases 1 and 2 of the capstone are implemented. The phase 3 CI/CD workflow is prepared for review; it has not run on GitHub because no remote is configured. Terraform, Kubernetes, monitoring deployment, and submission evidence are scheduled for later review phases.
+Phases 1 and 2 are implemented. Phase 3 CI/CD is prepared but has not run on GitHub because no remote is configured. Phase 4 Terraform, Kubernetes, and Helm files are prepared for review; no AWS resources or cluster workloads have been created. Monitoring deployment and submission evidence remain for later phases.
+
+The [phase 4 deployment runbook](DEPLOYMENT.md) explains infrastructure ownership, the external Secrets, GHCR access, database migration order, ingress and metrics prerequisites, SHA-tagged images, and safe teardown.
 
 ## Local architecture
 
