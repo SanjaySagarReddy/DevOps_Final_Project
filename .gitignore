@@ -1,0 +1,23 @@
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+
+# Frontend
+node_modules/
+dist/
+.npm-cache/
+
+# Editor and operating system
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
