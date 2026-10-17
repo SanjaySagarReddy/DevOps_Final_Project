@@ -19,6 +19,7 @@ playwright-report/
 test-results/
 .tools/
 secrets/
+*.local.yaml
 
 # Terraform state, local providers, and private variable values
 .terraform/

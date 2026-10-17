@@ -1,0 +1,6 @@
+# Keep ArgoCD private to cluster operators; access via kubectl port-forward.
+server:
+  service:
+    type: ClusterIP
+  ingress:
+    enabled: false

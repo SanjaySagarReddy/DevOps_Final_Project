@@ -49,3 +49,8 @@ ingress:
   className: nginx
   host: ""
   annotations: {}
+
+# Enable after kube-prometheus-stack installs the ServiceMonitor CRD.
+monitoring:
+  enabled: false
+  scrapeInterval: 30s

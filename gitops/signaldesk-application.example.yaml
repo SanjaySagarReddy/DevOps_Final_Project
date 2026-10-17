@@ -1,0 +1,27 @@
+# Copy to an ignored *.local.yaml file and replace the repository URL before
+# applying. The chart's tracked values-gitops.yaml also needs published SHA images.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: signaldesk
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/REPLACE_OWNER/REPLACE_REPO.git
+    targetRevision: main
+    path: helm/signaldesk
+    helm:
+      releaseName: signaldesk
+      valueFiles:
+        - values-gitops.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: signaldesk
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=false
+      - PruneLast=true

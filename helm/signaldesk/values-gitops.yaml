@@ -1,0 +1,15 @@
+# Required before ArgoCD sync: set the exact GHCR images from a successful
+# push-to-main run. Commit this file after replacing all three empty values.
+global:
+  imageTag: ""
+
+backend:
+  image:
+    repository: ""
+
+frontend:
+  image:
+    repository: ""
+
+monitoring:
+  enabled: true

@@ -1,0 +1,3 @@
+# Load with values.yaml only after kube-prometheus-stack is ready.
+monitoring:
+  enabled: true
