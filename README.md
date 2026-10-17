@@ -4,7 +4,7 @@ SignalDesk tracks service incidents from detection through investigation, mitiga
 
 The local application, tests, Compose stack, CI workflow, Terraform, Helm chart, monitoring values, and ArgoCD configuration are prepared. **PENDING live evidence:** no GitHub remote or successful Actions run, GHCR publication, AWS resources, Kubernetes deployment, Prometheus target, Grafana panel, public Ingress, or ArgoCD sync has been verified. The mandatory presentation video must be recorded after a real deployment. Local rendering and the dummy-credential Terraform plan establish configuration validity, not live AWS proof.
 
-The [deployment runbook](DEPLOYMENT.md) describes the approved deployment sequence and ownership. The [grading evidence checklist](demo/EVIDENCE_CHECKLIST.md) tracks each required artifact, and the [walkthrough script](demo/WALKTHROUGH.md) orders the eventual live demo. The [PDF slide deck](demo/slides.pdf) is the presentation visual; it contains no claimed live screenshots.
+The [deployment runbook](DEPLOYMENT.md) describes the approved deployment sequence and ownership. The [grading evidence checklist](demo/EVIDENCE_CHECKLIST.md) links genuine local browser, pytest, and Compose captures and tracks the remaining live artifacts; the [walkthrough script](demo/WALKTHROUGH.md) orders the eventual live demo. The [PDF slide deck](demo/slides.pdf) is the presentation visual; it contains no claimed live screenshots.
 
 ## Stack and repository map
 
@@ -232,7 +232,7 @@ For the grader's ArgoCD demo, the runbook starts with a manual Helm release so `
 
 ## Submission status
 
-The lecturer requires a GitHub repository with at least ten meaningful commits, screenshots or terminal captures for the live stages, a PDF/PPT deck of at least eight slides, and a **mandatory video** presenting the slides first and then a full live walkthrough. This local repository has meaningful commits, but it has no remote. The deck and walkthrough are prepared; the video and all remote/cloud evidence remain pending. Use [demo/EVIDENCE_CHECKLIST.md](demo/EVIDENCE_CHECKLIST.md) to gather actual proof after the approved deployment, then record the video and publish it under `demo/` or as a repository release asset. Never replace a pending item with an offline render or invented screenshot.
+The lecturer requires a GitHub repository with at least ten meaningful commits, screenshots or terminal captures for the live stages, a PDF/PPT deck of at least eight slides, and a **mandatory video** presenting the slides first and then a full live walkthrough. This local repository has meaningful commits, but it has no remote. The deck, walkthrough, and local browser/test/Compose captures are prepared; the video and all remote/cloud evidence remain pending. The recording script requires a **new commit and push to `main` on camera**, then a completed Actions run and both GHCR images bearing that exact full SHA. Use [demo/EVIDENCE_CHECKLIST.md](demo/EVIDENCE_CHECKLIST.md) to gather actual proof after the approved deployment, then record the video and publish it under `demo/` or as a repository release asset. Never replace a pending item with an offline render or invented screenshot.
 
 The 13-slide PDF is committed as `demo/slides.pdf`. To regenerate it from vector shapes and text, install `PyMuPDF>=1.27,<2` and run `python demo/build_slides.py` from the repository root.
 
