@@ -1,0 +1,50 @@
+﻿Live cluster verification (2026-10-17, ap-southeast-2)
+Commands were run against the isolated project kubeconfig. Secret values and administrator CIDR are omitted.
+
+$ kubectl get nodes
+NAME                                              STATUS   ROLES    AGE     VERSION
+ip-10-50-10-32.ap-southeast-2.compute.internal    Ready    <none>   3h17m   v1.36.4-eks-b9510e3
+ip-10-50-11-164.ap-southeast-2.compute.internal   Ready    <none>   3h17m   v1.36.4-eks-b9510e3
+
+$ kubectl get pods,svc,ingress,hpa,pvc,servicemonitor -n signaldesk
+NAME                                       READY   STATUS    RESTARTS   AGE
+pod/signaldesk-backend-67599cf97d-7wjtr    1/1     Running   0          3h
+pod/signaldesk-backend-67599cf97d-f25mb    1/1     Running   0          3h
+pod/signaldesk-frontend-64c77bd8db-prbdq   1/1     Running   0          3h
+pod/signaldesk-frontend-64c77bd8db-vpwjd   1/1     Running   0          3h
+pod/signaldesk-postgresql-0                1/1     Running   0          3h44m
+
+NAME                                     TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+service/signaldesk-backend               ClusterIP   172.20.87.146   <none>        8000/TCP   3h5m
+service/signaldesk-frontend              ClusterIP   172.20.219.79   <none>        8080/TCP   3h5m
+service/signaldesk-postgresql            ClusterIP   172.20.21.1     <none>        5432/TCP   3h44m
+service/signaldesk-postgresql-headless   ClusterIP   None            <none>        5432/TCP   3h44m
+
+NAME                                   CLASS   HOSTS   ADDRESS                                                                              PORTS   AGE
+ingress.networking.k8s.io/signaldesk   nginx   *       k8s-ingressn-ingressn-4c3b7ef9a7-f3a0927abc34d21d.elb.ap-southeast-2.amazonaws.com   80      3h5m
+
+NAME                                                     REFERENCE                       TARGETS       MINPODS   MAXPODS   REPLICAS   AGE
+horizontalpodautoscaler.autoscaling/signaldesk-backend   Deployment/signaldesk-backend   cpu: 3%/70%   2         5         2          3h5m
+
+NAME                                                          STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS     VOLUMEATTRIBUTESCLASS   AGE
+persistentvolumeclaim/postgres-data-signaldesk-postgresql-0   Bound    pvc-87653ad9-aba7-4f28-ae9a-1dcc43c0a539   10Gi       RWO            signaldesk-gp3   <unset>                 3h44m
+
+NAME                                                      AGE
+servicemonitor.monitoring.coreos.com/signaldesk-backend   3h5m
+
+$ kubectl get application signaldesk -n argocd
+NAME         SYNC     HEALTH    REVISION
+signaldesk   Synced   Healthy   3a780f941c637cc3eca27e00399c5a331d7c82c0
+
+$ kubectl get deployment signaldesk-backend signaldesk-frontend -n signaldesk
+NAME                  READY   IMAGE
+signaldesk-backend    2       ghcr.io/sanjaysagarreddy/devops_final_project-backend:49e3313a4729eb8056ec01e15669ac389eea1897
+signaldesk-frontend   2       ghcr.io/sanjaysagarreddy/devops_final_project-frontend:49e3313a4729eb8056ec01e15669ac389eea1897
+
+$ helm list --kubeconfig .tools/kubeconfig -A
+NAME                        	NAMESPACE    	REVISION	UPDATED                              	STATUS  	CHART                              	APP VERSION
+argocd                      	argocd       	1       	2026-10-17 12:49:59.9093664 +0530 IST	deployed	argo-cd-10.10.5                    	v3.5.5
+aws-load-balancer-controller	kube-system  	1       	2026-10-17 12:48:42.3156583 +0530 IST	deployed	aws-load-balancer-controller-1.14.0	v2.14.0
+ingress-nginx               	ingress-nginx	1       	2026-10-17 12:49:30.8128371 +0530 IST	deployed	ingress-nginx-4.15.1               	1.15.1
+kube-prometheus-stack       	monitoring   	1       	2026-10-17 12:48:08.2519093 +0530 IST	deployed	kube-prometheus-stack-92.10.1      	v0.94.1
+metrics-server              	kube-system  	1       	2026-10-17 12:23:58.8619592 +0530 IST	deployed	metrics-server-3.14.0              	0.9.0

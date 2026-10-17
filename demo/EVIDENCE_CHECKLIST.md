@@ -1,8 +1,8 @@
 # SignalDesk grading evidence checklist
 
-Source of requirements: the lecturer's `devsecops-python-main/GRADING.md` and `README.md` in the sibling reference folder. Local and GitHub items marked verified below have actual evidence; cloud and video items remain pending.
+Source of requirements: the lecturer's `devsecops-python-main/GRADING.md` and `README.md` in the sibling reference folder. Local, GitHub, and cluster items marked verified below have actual evidence; the video, AWS Console screenshots, and teardown remain pending.
 
-Status key: **LOCAL VERIFIED** means tested on the developer machine with genuine local captures; **LIVE VERIFIED** means checked against the actual GitHub service; **PREPARED** means code or configuration passed local checks; **PENDING LIVE** requires a real cloud service or cluster; **PENDING VIDEO** requires the student's recording. The local captures were taken on 2026-10-17 from the running Compose stack and a fresh test run. Save future captures under `demo/evidence/` with descriptive names and record URLs in the submission form. Do not commit credentials, kubeconfig files, Terraform state, or screenshots containing secrets.
+Status key: **LOCAL VERIFIED** means tested on the developer machine; **LIVE VERIFIED** means checked against GitHub or the actual AWS/EKS deployment; **PREPARED** means configuration passed local checks; **PENDING CAPTURE** means a visual or Console capture still needs to be taken; **PENDING VIDEO** requires the student's recording. Captures were taken on 2026-10-17. Do not commit credentials, kubeconfig files, Terraform state, or screenshots containing secrets.
 
 ## Local capture index
 
@@ -19,6 +19,24 @@ These are unedited page screenshots from a real headless Chrome run and terminal
 | Deleted, dashboard clear | [desktop](evidence/local-desktop-deleted.png) | [mobile](evidence/local-mobile-deleted.png) |
 
 Terminal captures: [eight passing pytest cases](evidence/local-pytest-terminal.png) and [three-service Compose build/start](evidence/local-compose-terminal.png).
+
+## Live EKS browser capture index
+
+These are unedited Chrome page screenshots through the public AWS NLB. [The capture script](../e2e/capture-local-evidence.mjs) ran the same create, edit, status transition, and delete assertions at desktop and mobile widths with `EVIDENCE_BASE_URL` set to the NLB. Its temporary incidents were deleted. The HTTP demo has no authentication; the screenshots contain only test data.
+
+| UI step | Desktop | Mobile |
+|---|---|---|
+| Dashboard before create | [desktop](evidence/live-desktop-dashboard.png) | [mobile](evidence/live-mobile-dashboard.png) |
+| Created, status open | [desktop](evidence/live-desktop-created.png) | [mobile](evidence/live-mobile-created.png) |
+| Edited title and owner | [desktop](evidence/live-desktop-edited.png) | [mobile](evidence/live-mobile-edited.png) |
+| Investigating | [desktop](evidence/live-desktop-investigating.png) | [mobile](evidence/live-mobile-investigating.png) |
+| Mitigated | [desktop](evidence/live-desktop-mitigated.png) | [mobile](evidence/live-mobile-mitigated.png) |
+| Resolved | [desktop](evidence/live-desktop-resolved.png) | [mobile](evidence/live-mobile-resolved.png) |
+| Deleted, dashboard clear | [desktop](evidence/live-desktop-deleted.png) | [mobile](evidence/live-mobile-deleted.png) |
+
+[Live cluster command output](evidence/live-cluster-verification.txt) records two Ready nodes, running application and PostgreSQL Pods, Services, Ingress, HPA, bound PVC, ServiceMonitor, deployed controller releases, and the ArgoCD sync status and image SHA. [The actual pre-handoff Helm terminal output](evidence/manual-helm-before-argocd.txt) shows the `signaldesk` release deployed with healthy Pods before ArgoCD took ownership. An on-camera live `helm list` demonstration would require reinstalling the manual release after first removing the ArgoCD Application.
+
+Monitoring and GitOps UI captures from authenticated local port-forwards: [Prometheus Targets with both SignalDesk endpoints UP](evidence/live-prometheus-targets.png), [Grafana dashboard with request-rate and p95 data after 100 successful API reads](evidence/live-grafana-dashboard.png), and [ArgoCD application Synced/Healthy at commit `3a780f9`](evidence/live-argocd-signaldesk.png). The browser automation used credentials only from ignored local recovery data or the in-cluster Secret; no credentials are stored in these screenshots or scripts.
 
 ## Live GitHub capture index
 
@@ -71,21 +89,24 @@ The public Actions page asks viewers to sign in for step logs. The Trivy text fi
 ## M7 — Terraform and AWS (15 points)
 
 - [x] **PREPARED:** Valid Terraform in `terraform/`, including the VPC, two public subnets, EKS, worker nodes, and `terraform.tfvars.example`. A dummy-credential, refresh-free local plan showed 28 resources to add; it is **not a live AWS plan**.
-- [ ] **PENDING LIVE / APPROVAL REQUIRED:** With approved AWS access, run a real `terraform init` and `terraform plan -var-file=terraform.tfvars` and capture the plan output. Review costs and CIDR values before apply.
-- [ ] **PENDING LIVE / APPROVAL REQUIRED:** After explicit approval, capture actual `terraform apply` output and AWS Console proof of the VPC, two public subnets, EKS cluster, and worker node group in the configured region.
-- [ ] **PENDING LIVE / APPROVAL REQUIRED:** After the demo and backup, capture successful `terraform destroy` output and verify no paid NLB/EBS/EKS resources remain. Follow the runbook teardown order.
+- [x] **LIVE VERIFIED:** Approved Terraform init, validation, and real plan in `ap-southeast-2` succeeded. The original plan proposed 28 creations and no changes or destroys; the administrator EKS API CIDR was a verified public IPv4 `/32`. The first apply's `t3.large` node group was rejected by this account; the failed group was removed and an approved recovery apply created `signaldesk-workers-v2` with two `m7i-flex.large` nodes. A later refresh-based plan reported no changes. Private Terraform state and the actual CIDR are excluded from Git.
+- [x] **LIVE VERIFIED:** The VPC, two public and two private subnets, EKS cluster, worker group, EBS CSI, and Pod Identity Agent exist; two nodes are Ready in [cluster output](evidence/live-cluster-verification.txt).
+- [ ] **PENDING CAPTURE:** Save genuine AWS Console screenshots of the VPC/subnets, EKS cluster, and node group, plus a sanitized terminal capture of the real Terraform plan/apply. Do not expose the operator `/32`, account secrets, or Terraform state.
+- [ ] **PENDING TEARDOWN:** After the demo and backup, capture successful `terraform destroy` and verify no paid NLB/EBS/EKS resources remain. Follow the runbook teardown order.
 
 ## M8 — Kubernetes and Helm (15 points)
 
 - [x] **PREPARED:** Namespace/bootstrap YAML and SignalDesk Helm chart render and validate locally. The chart defines two frontend replicas, a backend HPA minimum of two, two ClusterIP Services, `/` and `/api` Ingress routes, and a one-time migration Job.
-- [ ] **PENDING LIVE:** Capture `kubectl get pods -n signaldesk` with frontend and backend replicas Running, PostgreSQL ready, and `kubectl get svc -n signaldesk` with both ClusterIP Services.
-- [ ] **PENDING LIVE:** Capture `kubectl get ingress,hpa,pvc -n signaldesk`, a successful `helm list -n signaldesk` **before the ArgoCD handoff**, and browser access through the real public Ingress hostname.
+- [x] **LIVE VERIFIED:** [Cluster output](evidence/live-cluster-verification.txt) shows two backend Pods, two frontend Pods, PostgreSQL, ClusterIP Services, Ingress, HPA with CPU metrics, and a bound gp3 PVC. The manual Helm release and one-time migration were verified before handoff; ArgoCD owns the application now.
+- [x] **LIVE VERIFIED:** [Desktop/mobile browser captures](#live-eks-browser-capture-index) and API checks passed through the real public NLB.
+- [x] **LIVE VERIFIED:** [Pre-handoff Helm terminal output](evidence/manual-helm-before-argocd.txt) shows the deployed manual release and healthy app resources. `helm list -n signaldesk` is now empty because ArgoCD owns the chart resources; explain this sequence in the video.
 
 ## M9 — Prometheus and Grafana (10 points)
 
 - [x] **LOCAL VERIFIED / PREPARED:** `/metrics` returned Prometheus text locally; a rendered ServiceMonitor targets `/metrics`, and the dashboard JSON contains live request-rate and latency queries. This is not a cluster scrape result.
-- [ ] **PENDING LIVE:** Capture backend `/metrics` output in the deployed cluster and Prometheus **Status → Targets** showing the SignalDesk target `UP`.
-- [ ] **PENDING LIVE:** Capture Grafana reachable through a port-forward and the SignalDesk dashboard with at least one **populated application metric panel** after real API traffic.
+- [x] **LIVE VERIFIED:** Prometheus API queries through a local port-forward showed both SignalDesk backend targets `UP` and 12 `incident_http_requests_total` series after real browser/API traffic.
+- [x] **LIVE VERIFIED:** Grafana API through a local port-forward reported a healthy database, Prometheus datasource, and the provisioned **SignalDesk incident API** dashboard.
+- [x] **LIVE VERIFIED:** [Prometheus Targets screenshot](evidence/live-prometheus-targets.png) shows both backend targets `UP`; [Grafana dashboard screenshot](evidence/live-grafana-dashboard.png) shows populated request-rate and p95 latency panels after 100 successful API reads through the NLB.
 
 ## M10 — Documentation and presentation (5 points)
 
@@ -96,5 +117,6 @@ The public Actions page asks viewers to sign in for step logs. The Trivy text fi
 ## Evidence integrity and remaining blockers
 
 - GitHub remote, successful Actions run, Trivy scan output, and both GHCR packages are verified above. The separate on-camera commit/push, its run, and its matching images remain pending with the mandatory video.
-- No AWS resources were created in these preparation phases. Obtain explicit deployment approval, suitable AWS credentials/permissions, an actual administrator CIDR, and a cost/teardown window before a live plan/apply.
-- Do not label `helm template`, kubeconform, a dummy-credential plan, or local `/metrics` as proof of live EKS, Prometheus, Grafana, Ingress, or ArgoCD operation.
+- The approved AWS deployment is live and incurs ongoing EKS, EC2, NAT, NLB, EBS, and possible data transfer costs. The demo is public HTTP without app authentication; use test data only. Arrange a backup and teardown after grading.
+- [ArgoCD is Synced/Healthy](evidence/live-argocd-signaldesk.png) at commit `3a780f9` and both Deployments run published image SHA `49e3313a4729eb8056ec01e15669ac389eea1897`. The tracked GitOps pointer changed after the initial manual Helm handoff; its PreSync migration succeeded.
+- Do not label `helm template`, kubeconform, a dummy-credential plan, or local `/metrics` as proof of live operation; the live claims above come from the running cluster and public NLB.

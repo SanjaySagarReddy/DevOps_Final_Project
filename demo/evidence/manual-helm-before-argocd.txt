@@ -1,0 +1,27 @@
+﻿Manual Helm release before ArgoCD handoff
+NAME      	NAMESPACE 	REVISION	UPDATED                            	STATUS  	CHART           	APP VERSION
+signaldesk	signaldesk	1       	2026-10-17 12:51:42.90056 +0530 IST	deployed	signaldesk-0.1.0	0.1.0
+NAME                                       READY   STATUS    RESTARTS   AGE     IP             NODE                                              NOMINATED NODE   READINESS GATES
+pod/signaldesk-backend-d94cbd8d5-l46r5     1/1     Running   0          4m14s   10.50.10.93    ip-10-50-10-32.ap-southeast-2.compute.internal    <none>           <none>
+pod/signaldesk-backend-d94cbd8d5-ttd2h     1/1     Running   0          3m59s   10.50.11.145   ip-10-50-11-164.ap-southeast-2.compute.internal   <none>           <none>
+pod/signaldesk-frontend-777c8c975f-d9786   1/1     Running   0          4m14s   10.50.11.208   ip-10-50-11-164.ap-southeast-2.compute.internal   <none>           <none>
+pod/signaldesk-frontend-777c8c975f-nh89v   1/1     Running   0          4m14s   10.50.10.247   ip-10-50-10-32.ap-southeast-2.compute.internal    <none>           <none>
+pod/signaldesk-postgresql-0                1/1     Running   0          38m     10.50.11.75    ip-10-50-11-164.ap-southeast-2.compute.internal   <none>           <none>
+
+NAME                                     TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE     SELECTOR
+service/signaldesk-backend               ClusterIP   172.20.149.27   <none>        8000/TCP   4m15s   app.kubernetes.io/instance=signaldesk,app.kubernetes.io/name=signaldesk-backend
+service/signaldesk-frontend              ClusterIP   172.20.54.117   <none>        8080/TCP   4m15s   app.kubernetes.io/instance=signaldesk,app.kubernetes.io/name=signaldesk-frontend
+service/signaldesk-postgresql            ClusterIP   172.20.21.1     <none>        5432/TCP   38m     app.kubernetes.io/name=signaldesk-postgresql
+service/signaldesk-postgresql-headless   ClusterIP   None            <none>        5432/TCP   38m     app.kubernetes.io/name=signaldesk-postgresql
+
+NAME                                   CLASS   HOSTS   ADDRESS                                                                              PORTS   AGE
+ingress.networking.k8s.io/signaldesk   nginx   *       k8s-ingressn-ingressn-4c3b7ef9a7-f3a0927abc34d21d.elb.ap-southeast-2.amazonaws.com   80      4m15s
+
+NAME                                                     REFERENCE                       TARGETS       MINPODS   MAXPODS   REPLICAS   AGE
+horizontalpodautoscaler.autoscaling/signaldesk-backend   Deployment/signaldesk-backend   cpu: 6%/70%   2         5         2          4m15s
+
+NAME                                                          STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS     VOLUMEATTRIBUTESCLASS   AGE   VOLUMEMODE
+persistentvolumeclaim/postgres-data-signaldesk-postgresql-0   Bound    pvc-87653ad9-aba7-4f28-ae9a-1dcc43c0a539   10Gi       RWO            signaldesk-gp3   <unset>                 38m   Filesystem
+
+NAME                                                      AGE
+servicemonitor.monitoring.coreos.com/signaldesk-backend   4m15s

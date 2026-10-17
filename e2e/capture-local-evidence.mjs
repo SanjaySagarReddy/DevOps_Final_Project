@@ -4,7 +4,9 @@ import { chromium, expect } from '@playwright/test'
 import { mkdir } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 
-const baseURL = 'http://127.0.0.1:3000'
+const baseURL = process.env.EVIDENCE_BASE_URL || 'http://127.0.0.1:3000'
+const evidencePrefix = process.env.EVIDENCE_PREFIX || 'local'
+if (!/^[a-z0-9-]+$/.test(evidencePrefix)) throw new Error('Invalid evidence prefix')
 const evidenceDir = fileURLToPath(new URL('../demo/evidence/', import.meta.url))
 await mkdir(evidenceDir, { recursive: true })
 
@@ -20,7 +22,7 @@ try {
     const editedTitle = `Evidence ${device.name} checkout recovery`
     let incidentId
     const capture = async (stage) => {
-      const path = `${evidenceDir}local-${device.name}-${stage}.png`
+      const path = `${evidenceDir}${evidencePrefix}-${device.name}-${stage}.png`
       await page.screenshot({ path, fullPage: true, animations: 'disabled' })
       console.log(`${page.url()} -> ${path}`)
     }

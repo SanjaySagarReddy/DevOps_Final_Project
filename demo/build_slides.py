@@ -102,8 +102,8 @@ text(page, 62, 78, "SIGNALDESK", 18, TEAL, True)
 block(page, 62, 118, 790, 125, "Incident management, from local app to GitOps", 43, WHITE, True)
 block(page, 64, 258, 780, 75, "Original React + FastAPI + PostgreSQL application with a tested delivery path through CI, containers, Terraform, Kubernetes, observability, and ArgoCD.", 19, MUTED)
 pill(page, 64, 385, 208, "PREPARED CAPSTONE")
-pill(page, 286, 385, 234, "LIVE DEPLOYMENT PENDING", PANEL2, AMBER)
-text(page, 64, 497, "LECTURER FINAL PROJECT  /  VIDEO TO BE RECORDED AFTER LIVE DEPLOYMENT", 11, MUTED, True)
+pill(page, 286, 385, 234, "LIVE EKS DEPLOYMENT", PANEL2, TEAL)
+text(page, 64, 497, "LECTURER FINAL PROJECT  /  VIDEO RECORDING PENDING", 11, MUTED, True)
 text(page, 884, 497, "01", 11, MUTED, True)
 
 
@@ -120,7 +120,7 @@ card(page, 489, 339, 423, 107, "Recovery loop", "Resolved incidents can reopen; 
 
 
 # 3 — stack architecture
-page = base("02 / Tech stack", "Three layers, one incident record", "Local Compose is verified; the same application images are prepared for Kubernetes.", pending=False)
+page = base("02 / Tech stack", "Three layers, one incident record", "Local Compose and the EKS application are running with published SHA-tagged images.", pending=False)
 card(page, 48, 168, 250, 196, "Browser and UI", "React + Vite dashboard\nResponsive CSS\nNginx runtime\n/api routed to FastAPI", BLUE, 15)
 arrow(page, 302, 266, 332)
 card(page, 339, 168, 250, 196, "API and workflow", "FastAPI REST endpoints\nSQLAlchemy ORM\nReadiness and /metrics\nAlembic migrations", TEAL, 15)
@@ -135,7 +135,7 @@ card(page, 48, 166, 271, 181, "API tests", "8 isolated pytest cases across healt
 card(page, 344, 166, 271, 181, "Browser tests", "4 Chrome checks at desktop and mobile widths, including API failure states.", BLUE)
 card(page, 640, 166, 272, 181, "Compose", "Frontend, backend, and PostgreSQL ran together; app images ran as non-root.", AMBER)
 rect(page, 48, 372, 864, 69, PANEL2)
-block(page, 66, 388, 828, 50, "The local /metrics endpoint returned a live request counter. No Prometheus target or Grafana panel has been verified in EKS.", 17, WHITE)
+block(page, 66, 388, 828, 50, "The same API passed live browser workflows through the public NLB; Prometheus now scrapes both backend replicas.", 17, WHITE)
 
 
 # 5 — CI/CD
@@ -151,15 +151,15 @@ block(page, 66, 382, 828, 54, "Run #1 (33310e2) passed; both scans found 0 HIGH/
 
 
 # 6 — AWS
-page = base("05 / Infrastructure", "Terraform prepares the AWS foundation", "A dummy-credential, refresh-free plan validated the graph; no AWS resources were created.")
+page = base("05 / Infrastructure", "Terraform provisioned the AWS foundation", "Approved live apply completed in Sydney; a later refresh-based plan reported no changes.", pending=False, status_text="LIVE AWS VERIFIED")
 card(page, 48, 170, 268, 217, "Network", "VPC\n2 public subnets\n2 private subnets\nInternet gateway + NAT", BLUE)
-card(page, 346, 170, 268, 217, "Compute", "EKS cluster\nManaged worker node group\n2 desired t3.large nodes\nPod Identity Agent", TEAL)
+card(page, 346, 170, 268, 217, "Compute", "EKS cluster\nManaged worker node group\n2 desired m7i-flex.large nodes\nPod Identity Agent", TEAL)
 card(page, 644, 170, 268, 217, "Storage", "EBS CSI add-on\ngp3 StorageClass\nPostgreSQL PVC\nPrometheus and Grafana PVCs", AMBER)
-block(page, 51, 407, 860, 44, "LOCAL PLAN: 28 to add, 0 to change, 0 to destroy  |  LIVE PLAN, APPLY, CONSOLE, DESTROY: PENDING", 15, AMBER, True)
+block(page, 51, 407, 860, 44, "LIVE: 2 READY NODES, EKS + EBS + VPC  |  CONSOLE CAPTURES AND TEARDOWN: PENDING", 15, TEAL, True)
 
 
 # 7 — Kubernetes
-page = base("06 / Kubernetes + Helm", "Replicas, routing, and one migration owner", "The Helm chart is rendered and validated locally; live Pods and Services remain pending.")
+page = base("06 / Kubernetes + Helm", "Replicas, routing, and one migration owner", "Two frontend and two backend Pods are Ready; PostgreSQL has a bound encrypted gp3 claim.", pending=False, status_text="LIVE EKS VERIFIED")
 card(page, 48, 166, 270, 187, "Frontend", "2 replicas\nNginx container\nClusterIP Service\nServes the React bundle", BLUE)
 card(page, 345, 166, 270, 187, "Backend", "2 replicas minimum\nCPU HPA up to 5\nClusterIP Service\n/ready checks PostgreSQL", TEAL)
 card(page, 642, 166, 270, 187, "PostgreSQL", "Single StatefulSet\nPersistent gp3 claim\nConnection in Secret\nBack up before teardown", AMBER)
@@ -168,17 +168,17 @@ block(page, 66, 388, 829, 52, "A pre-install / pre-upgrade Job runs Alembic once
 
 
 # 8 — public ingress
-page = base("07 / Public route", "One internet-facing NLB, two app paths", "Controller chart 1.14.0 uses app v2.14.0 and the matching v2.14.0 IAM policy.")
+page = base("07 / Public route", "One internet-facing NLB, two app paths", "Controller chart 1.14.0 and matching v2.14.0 IAM policy created the public NLB.", pending=False, status_text="LIVE INGRESS VERIFIED")
 card(page, 48, 179, 245, 170, "AWS Load Balancer", "NLB Service class\nInternet-facing scheme\nIP targets in the VPC", BLUE)
 arrow(page, 297, 264, 333)
 card(page, 341, 179, 245, 170, "ingress-nginx", "Receives public HTTP\nRoutes on path\nService gets NLB hostname", TEAL)
 arrow(page, 590, 264, 626)
 card(page, 634, 179, 278, 170, "Application", "/ -> React frontend\n/api -> FastAPI backend\nBoth Services are ClusterIP", AMBER)
-block(page, 51, 384, 850, 61, "Ingress browser proof is PENDING. This demo path is HTTP; configure domain and TLS before sensitive public use.", 17, WHITE)
+block(page, 51, 384, 850, 61, "Desktop and mobile workflows passed through the NLB. Demo route is HTTP without app authentication; use test data only.", 17, WHITE)
 
 
 # 9 — monitoring
-page = base("08 / Observability", "From /metrics to a live Grafana panel", "The metric contract and dashboard are prepared. Cluster scrape and visual proof are pending.")
+page = base("08 / Observability", "From /metrics to a live Grafana panel", "Prometheus targets and Grafana dashboard were verified through local port-forwards.", pending=False, status_text="LIVE METRICS VERIFIED")
 items = [("FastAPI", "Request, latency, creation, transition counters"), ("ServiceMonitor", "Scrape backend /metrics every 30s"), ("Prometheus", "Discover the app across namespaces"), ("Grafana", "Request rate and p95 latency panels")]
 for i, (heading, body) in enumerate(items):
     x = 48 + i * 226
@@ -186,45 +186,45 @@ for i, (heading, body) in enumerate(items):
     if i < 3:
         arrow(page, x + 208, 260, x + 225, MUTED)
 rect(page, 48, 370, 864, 75, PANEL2)
-block(page, 66, 387, 825, 49, "Required live proof: Prometheus target UP and a populated SignalDesk application metric panel after real API traffic.", 17, WHITE)
+block(page, 66, 387, 825, 49, "Both backend targets are UP; the Grafana screenshot shows request-rate and p95 latency data after live traffic.", 17, WHITE)
 
 
 # 10 — GitOps
-page = base("09 / GitOps ownership", "Helm demo, then ArgoCD ownership", "The handoff prevents two controllers from continuously overwriting the same app resources.")
+page = base("09 / GitOps ownership", "Helm demo, then ArgoCD ownership", "The manual release was removed before ArgoCD took ownership of the application.", pending=False, status_text="LIVE GITOPS VERIFIED")
 card(page, 48, 180, 265, 169, "1  Manual Helm", "Install the app with a published SHA. Capture helm list and healthy Pods.", BLUE)
 arrow(page, 317, 263, 344)
 card(page, 352, 180, 265, 169, "2  Handoff", "Uninstall only the app release. Keep DB, Secrets, and monitoring.", AMBER)
 arrow(page, 621, 263, 648)
 card(page, 656, 180, 256, 169, "3  ArgoCD", "Sync chart from Git. PreSync Job migrates; tracked SHA values roll Pods.", TEAL)
-block(page, 51, 386, 856, 62, "The ArgoCD Application is prepared, but Synced/Healthy status and a GitOps update are PENDING LIVE proof.", 17, WHITE)
+block(page, 51, 386, 856, 62, "ArgoCD is Synced/Healthy. Commit 3a780f9 updated the tracked pointer; both Deployments run published image SHA 49e3313.", 17, WHITE)
 
 
 # 11 — evidence status
-page = base("10 / Evidence integrity", "Claims follow their evidence", "Local and GitHub proof is captured; AWS and cluster proof remains pending.")
+page = base("10 / Evidence integrity", "Claims follow their evidence", "Local, GitHub, public browser, and cluster command results are captured.", pending=False, status_text="LIVE EVIDENCE VERIFIED")
 card(page, 48, 170, 408, 224, "Locally verified", "8 pytest cases and 4 Chrome checks\nThree-service Compose stack\nNon-root application images\nTerraform fmt/validate/offline plan\nHelm render and schema checks", TEAL, 15)
-card(page, 504, 170, 408, 224, "Live GitHub / pending cloud", "Actions run #1 succeeded\nBoth Trivy scans: 0 HIGH/CRITICAL\nBoth public GHCR SHA tags\nAWS, EKS, Ingress: pending\nPrometheus, Grafana, ArgoCD: pending", AMBER, 15)
-block(page, 52, 417, 850, 34, "No AWS, cluster, monitoring, ArgoCD, or video success is claimed before verification.", 16, WHITE, True)
+card(page, 504, 170, 408, 224, "Live GitHub and AWS", "Actions published both SHA images\nTwo EKS worker nodes Ready\nPublic browser workflow passed\nPrometheus targets UP\nArgoCD Synced / Healthy", AMBER, 15)
+block(page, 52, 417, 850, 34, "Pending: video, AWS Console captures, and eventual teardown proof.", 16, WHITE, True)
 
 
 # 12 — final video
 page = base("11 / Presentation", "The mandatory video starts with these slides", "Then show the complete live path, with actual evidence on screen.")
 card(page, 48, 166, 408, 211, "Video order", "1. Present slide deck first\n2. Incident workflow and tests\n3. New commit + push, run, GHCR\n4. Terraform and AWS Console\n5. Helm, Ingress, monitoring, ArgoCD", BLUE, 15)
 card(page, 504, 166, 408, 211, "Evidence to preserve", "Commit history and test output\nRunning Pods, Services, Helm list\nPublic browser route\nPrometheus target + Grafana panel\nArgoCD update and teardown", TEAL, 15)
-block(page, 52, 402, 850, 52, "The video is PENDING until a real deployment exists. The rubric awards zero for the presentation module without it.", 17, AMBER, True)
+block(page, 52, 402, 850, 52, "The deployment is live; the mandatory recording remains pending. The rubric awards zero for this module without it.", 17, AMBER, True)
 
 
 # 13 — lessons
-page = base("12 / Key learnings", "A traceable path needs clear gates and owners", "GitHub and GHCR are verified; explicit AWS approval comes before cluster evidence.")
+page = base("12 / Key learnings", "A traceable path needs clear gates and owners", "GitHub and GHCR are verified; the approved AWS deployment is running.", pending=False, status_text="LIVE DEPLOYMENT VERIFIED")
 card(page, 48, 169, 269, 192, "Quality before release", "Tests and frontend build gate image creation. Trivy gates both image pushes.", BLUE)
 card(page, 346, 169, 269, 192, "One owner per resource", "Terraform owns AWS; Helm bootstraps controllers; ArgoCD owns the app after handoff.", TEAL)
 card(page, 644, 169, 268, 192, "Operations matter", "Guard cluster context, keep Secrets external, migrate once, monitor live, and destroy paid resources.", AMBER)
 rect(page, 48, 385, 864, 61, PANEL2)
-block(page, 66, 399, 824, 43, "Remaining: approved AWS deployment, cluster and monitoring proof, ArgoCD sync, and video.", 17, WHITE)
+block(page, 66, 399, 824, 43, "Remaining: video, AWS Console captures, backup, and paid-resource teardown after grading.", 17, WHITE)
 
 
 if len(doc) != 13:
     raise AssertionError(f"Expected 13 slides, found {len(doc)}")
-doc.set_metadata({"title": "SignalDesk DevOps Final Capstone", "author": "SignalDesk project", "subject": "GitHub pipeline verified; AWS deployment and video pending"})
+doc.set_metadata({"title": "SignalDesk DevOps Final Capstone", "author": "SignalDesk project", "subject": "GitHub pipeline and AWS deployment verified; video pending"})
 doc.save(OUT, garbage=4, deflate=True)
 doc.close()
 print(f"Wrote {OUT} with 13 slides")

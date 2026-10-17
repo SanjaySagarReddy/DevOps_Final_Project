@@ -150,7 +150,7 @@ resource "aws_iam_role_policy_attachment" "nodes" {
 
 resource "aws_eks_node_group" "main" {
   cluster_name    = aws_eks_cluster.main.name
-  node_group_name = format("%s-workers", var.project_name)
+  node_group_name = format("%s-workers-v2", var.project_name)
   node_role_arn   = aws_iam_role.nodes.arn
   subnet_ids      = [for subnet in values(aws_subnet.private) : subnet.id]
   instance_types  = var.node_instance_types

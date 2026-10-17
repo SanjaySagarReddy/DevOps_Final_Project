@@ -1,6 +1,6 @@
-# Deployment runbook (prepared, not executed)
+# Deployment runbook and live status
 
-This is a prepared runbook, not a record of a live AWS deployment. The approved GitHub push created two public SHA-tagged GHCR images, but no Terraform apply, EKS cluster, or Kubernetes workload has been created for this project yet. See the root README and evidence checklist for the verified image SHA and run URL.
+The approved AWS deployment is live in Sydney (`ap-southeast-2`). Terraform created the VPC, EKS, two `m7i-flex.large` worker nodes, Pod Identity Agent, and EBS CSI. PostgreSQL, ingress-nginx, the AWS Load Balancer Controller, Metrics Server, Prometheus, Grafana, and ArgoCD are installed. ArgoCD owns SignalDesk and reports `Synced`/`Healthy`; two frontend and two backend replicas run GHCR image SHA `49e3313a4729eb8056ec01e15669ac389eea1897`. The public NLB and API passed real browser and HTTP checks. The live stack incurs costs until reviewed teardown. See the [evidence checklist](demo/EVIDENCE_CHECKLIST.md) for verified and pending captures.
 
 ## Ownership and order
 
@@ -17,7 +17,7 @@ The PostgreSQL StatefulSet must be ready before installing the Helm chart. The c
 
 ## Terraform preparation
 
-From `terraform/`, copy `terraform.tfvars.example` to ignored `terraform.tfvars`. Set `cluster_endpoint_public_access_cidrs` to the operator's actual public IP with a `/32` mask. The example `203.0.113.0/24` is documentation space and will not allow normal administrator access. Keep `aws_region` and `availability_zones` consistent. Review the two `t3.large` worker nodes, one NAT gateway, EKS, and EBS costs before approval.
+From `terraform/`, copy `terraform.tfvars.example` to ignored `terraform.tfvars`. Set `cluster_endpoint_public_access_cidrs` to the operator's actual public IP with a `/32` mask. The example `203.0.113.0/24` is documentation space and will not allow normal administrator access. Keep `aws_region` and `availability_zones` consistent. Review the two `m7i-flex.large` worker nodes, one NAT gateway, EKS, and EBS costs before approval. This account rejects `t3.large` because it is not Free Tier eligible; eligibility for the replacement node type does not make the full deployment free.
 
 ```powershell
 cd terraform
@@ -28,7 +28,7 @@ terraform plan -var-file=terraform.tfvars
 cd ..
 ```
 
-`terraform plan` is read-only. A live plan still needs AWS credentials with VPC, IAM, EKS, EC2, and EBS permissions. Terraform state and private variable files are ignored by Git; store real state securely before team use. Do not run `terraform apply` until deployment is explicitly approved.
+`terraform plan` is read-only. The real apply was approved and completed; a subsequent refresh-based plan reported no changes. Terraform state and private variable files are ignored by Git; the current state is local and should be moved to a secure remote backend before team operation. Do not expose state or the real operator `/32` in screenshots or commits.
 
 For local syntax and graph validation without AWS credentials, use `terraform init -backend=false`, `terraform validate`, and `terraform plan -refresh=false -var-file=terraform.tfvars.example -var='offline_plan=true'` with dummy AWS environment credentials. `offline_plan` only skips provider account checks for that refresh-free plan. Never apply with it enabled.
 
@@ -36,7 +36,7 @@ After an approved apply, use the `configure_kubectl` Terraform output command. T
 
 ## Public Ingress and cluster prerequisites after approval
 
-The chosen path is **internet-facing AWS NLB → ingress-nginx → `/api` backend or `/` frontend**. The [AWS Load Balancer Controller](https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html) creates the NLB from the ingress-nginx `LoadBalancer` Service. The chart values in `k8s/ingress-nginx-values.yaml` explicitly select `service.k8s.aws/nlb`, `internet-facing`, and IP targets. Terraform tags the public subnets for load balancer discovery. Public NLBs incur AWS charges. Install the controller before ingress-nginx; install Metrics Server for the CPU HPA. These commands are for a future approved cluster and have not been executed here.
+The live path is **internet-facing AWS NLB → ingress-nginx → `/api` backend or `/` frontend**. The [AWS Load Balancer Controller](https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html) created the NLB from the ingress-nginx `LoadBalancer` Service. The chart values in `k8s/ingress-nginx-values.yaml` explicitly select `service.k8s.aws/nlb`, `internet-facing`, and IP targets. Terraform tags the public subnets for load balancer discovery. Public NLBs incur AWS charges. The commands below document the installation order used and remain useful for recovery.
 
 The cluster operator needs AWS CLI, `eksctl`, `kubectl`, and Helm, plus IAM permissions to create a policy and Pod Identity association. Terraform already installs the EKS Pod Identity Agent. Check the selected AWS identity and kubeconfig before creating anything:
 
@@ -121,7 +121,7 @@ kubectl get crd servicemonitors.monitoring.coreos.com
 kubectl get pods,pvc -n monitoring
 ```
 
-Once SignalDesk is deployed with monitoring enabled, inspect its ServiceMonitor and its two backend targets. Forward Prometheus locally with `kubectl port-forward -n monitoring svc/kube-prometheus-stack-prometheus 9090:9090` and check **Status → Targets** for the SignalDesk target `UP`. Forward Grafana with `kubectl port-forward -n monitoring svc/kube-prometheus-stack-grafana 3001:80`, sign in with the password you supplied, and open **SignalDesk incident API**. Create or edit an incident, then refresh the dashboard. Its request-rate panel uses `incident_http_requests_total` from `/metrics`, and its p95 panel uses `incident_http_request_duration_seconds_bucket`. A fresh system needs API traffic and a few scrape intervals before the rate panels populate. These live checks are still pending a real cluster.
+Prometheus API queries through a local port-forward found both SignalDesk backend targets `UP` and application request counter series. [The Targets screenshot](demo/evidence/live-prometheus-targets.png) shows both endpoints `UP`. Grafana's API reported a healthy database, Prometheus datasource, and the provisioned **SignalDesk incident API** dashboard; [the dashboard screenshot](demo/evidence/live-grafana-dashboard.png) shows populated request-rate and p95 latency panels after real API traffic. For a live recording, forward Prometheus with `kubectl port-forward -n monitoring svc/kube-prometheus-stack-prometheus 9090:9090` and inspect **Status → Targets**. Forward Grafana with `kubectl port-forward -n monitoring svc/kube-prometheus-stack-grafana 3001:80`, sign in with the administrator Secret, and open the dashboard. A fresh system needs API traffic and a few scrape intervals before rate panels populate.
 
 Use the **full 40-character SHA from a successful push-to-main Actions run** and the exact lowercase owner/repository used by that run. The chart rejects an empty or non-SHA tag. It defaults to two frontend replicas and an HPA minimum of two backend replicas.
 
@@ -164,4 +164,4 @@ The ArgoCD Application tracks the `main` branch and uses `values-gitops.yaml`; a
 
 First back up incident data. Remove the application from its **current** owner (Helm release or ArgoCD Application), then remove PostgreSQL and the monitoring Helm release. Delete their PVCs and confirm the EBS volumes are gone. Remove ArgoCD, ingress-nginx, the AWS Load Balancer Controller, and Metrics Server if installed only for this cluster; confirm the NLB is gone. Only then run an approved `terraform destroy`; destroying EKS before CSI cleans the PVCs can leave orphaned paid EBS volumes. The controller IAM policy and `eksctl` Pod Identity role/association are separate from Terraform and need their own reviewed cleanup.
 
-No cluster commands in this runbook have been executed against AWS for this handoff.
+The manual application Helm release was installed and verified, then removed before the live ArgoCD handoff. ArgoCD completed its `PreSync` migration. Commit `3a780f9` updated the tracked image pointer, and both Deployments now run the published `49e3313a4729eb8056ec01e15669ac389eea1897` images. The runbook's manual install and handoff commands are historical instructions; running them again against this live cluster would interrupt the ArgoCD-owned application.
