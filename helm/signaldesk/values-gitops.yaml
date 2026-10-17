@@ -1,15 +1,16 @@
-# Required before ArgoCD sync: set the exact GHCR images from a successful
-# push-to-main run. Commit this file after replacing all three empty values.
+# Public GHCR images from the successful push-to-main run at this full SHA.
 global:
-  imageTag: ""
+  imageTag: "a218eb246f1b9f2839fc4f8be7215147a3552a5a"
+
+imagePullSecrets: []
 
 backend:
   image:
-    repository: ""
+    repository: "ghcr.io/sanjaysagarreddy/devops_final_project-backend"
 
 frontend:
   image:
-    repository: ""
+    repository: "ghcr.io/sanjaysagarreddy/devops_final_project-frontend"
 
 monitoring:
   enabled: true
