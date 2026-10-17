@@ -1,4 +1,10 @@
 param(
+    [Parameter(Mandatory = $true)]
+    [ValidateNotNullOrEmpty()]
+    [string]$ExpectedContext,
+    [Parameter(Mandatory = $true)]
+    [ValidatePattern('^arn:aws[a-z-]*:eks:[a-z0-9-]+:[0-9]{12}:cluster/.+$')]
+    [string]$ExpectedClusterArn,
     [string]$Namespace = 'signaldesk',
     [switch]$SkipGhcrPullSecret
 )
@@ -21,13 +27,31 @@ function To-Base64([string]$Value) {
 }
 
 function Apply-Secret($Secret) {
-    $Secret | ConvertTo-Json -Depth 8 -Compress | kubectl apply --server-side --field-manager=signaldesk-secret-bootstrap -f -
+    $Secret | ConvertTo-Json -Depth 8 -Compress | kubectl --context $ExpectedContext apply --server-side --field-manager=signaldesk-secret-bootstrap -f -
     if ($LASTEXITCODE -ne 0) {
         throw "kubectl failed to create or update secret $($Secret.metadata.name)"
     }
 }
 
-kubectl get namespace $Namespace -o name | Out-Null
+$currentContext = kubectl config current-context
+if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($currentContext)) {
+    throw 'Refusing to update Secrets: no current kubeconfig context is available'
+}
+$currentContext = $currentContext.Trim()
+if ($currentContext -ne $ExpectedContext) {
+    throw "Refusing to update Secrets: current context '$currentContext' does not match expected '$ExpectedContext'"
+}
+
+$currentCluster = kubectl config view --minify -o 'jsonpath={.contexts[0].context.cluster}'
+if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($currentCluster)) {
+    throw 'Refusing to update Secrets: no current kubeconfig cluster is available'
+}
+$currentCluster = $currentCluster.Trim()
+if ($currentCluster -ne $ExpectedClusterArn) {
+    throw "Refusing to update Secrets: current cluster '$currentCluster' does not match expected '$ExpectedClusterArn'"
+}
+
+kubectl --context $ExpectedContext get namespace $Namespace -o name | Out-Null
 if ($LASTEXITCODE -ne 0) {
     throw "Namespace $Namespace does not exist"
 }
