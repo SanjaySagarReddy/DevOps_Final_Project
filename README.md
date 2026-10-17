@@ -2,9 +2,46 @@
 
 SignalDesk tracks service incidents from detection through investigation, mitigation, resolution, and reopening. Each incident has a title, affected service, severity, status, response owner, impact description, and creation, update, and resolution timestamps. The dashboard shows status totals and the latest 200 incidents, with search and filters. The detail drawer supports edits, workflow transitions, and deletion.
 
-Phases 1 and 2 are implemented. Phase 3 CI/CD is prepared but has not run on GitHub because no remote is configured. Phase 4 Terraform, Kubernetes, and Helm files are prepared for review; no AWS resources or cluster workloads have been created. Monitoring deployment and submission evidence remain for later phases.
+The local application, tests, Compose stack, CI workflow, Terraform, Helm chart, monitoring values, and ArgoCD configuration are prepared. **PENDING live evidence:** no GitHub remote or successful Actions run, GHCR publication, AWS resources, Kubernetes deployment, Prometheus target, Grafana panel, public Ingress, or ArgoCD sync has been verified. The mandatory presentation video must be recorded after a real deployment. Local rendering and the dummy-credential Terraform plan establish configuration validity, not live AWS proof.
 
-The [phase 4 deployment runbook](DEPLOYMENT.md) explains infrastructure ownership, the external Secrets, GHCR access, database migration order, ingress and metrics prerequisites, SHA-tagged images, and safe teardown.
+The [deployment runbook](DEPLOYMENT.md) describes the approved deployment sequence and ownership. The [grading evidence checklist](demo/EVIDENCE_CHECKLIST.md) tracks each required artifact, and the [walkthrough script](demo/WALKTHROUGH.md) orders the eventual live demo. The [PDF slide deck](demo/slides.pdf) is the presentation visual; it contains no claimed live screenshots.
+
+## Stack and repository map
+
+| Layer | Implementation | Main files |
+|---|---|---|
+| Incident UI | React, Vite, responsive CSS; Nginx in the container | `frontend/src/`, `frontend/Dockerfile` |
+| API and data | FastAPI, SQLAlchemy, PostgreSQL, Alembic | `backend/app/`, `backend/alembic/` |
+| Local stack | Three-service Docker Compose | `docker-compose.yml` |
+| Quality gates | Pytest, Playwright, GitHub Actions, Trivy | `backend/tests/`, `e2e/`, `.github/workflows/ci.yml` |
+| AWS | Terraform VPC, EKS, node group, Pod Identity, EBS CSI | `terraform/` |
+| Cluster app | Namespace/PostgreSQL bootstrap, Helm chart, migration Job | `k8s/`, `helm/signaldesk/` |
+| Observability and GitOps | Prometheus/Grafana values, ServiceMonitor, dashboard, ArgoCD Application | `monitoring/`, `gitops/` |
+
+## Planned AWS architecture
+
+This diagram describes the prepared deployment. It is **not a claim that these resources are running**.
+
+```mermaid
+flowchart LR
+    Browser --> NLB[Public AWS NLB]
+    NLB --> Nginx[ingress-nginx]
+    Nginx -->|/| Frontend[React frontend, 2 Pods]
+    Nginx -->|/api| Backend[FastAPI backend, 2+ Pods]
+    Backend --> Postgres[(PostgreSQL PVC)]
+    Prometheus[Prometheus] -->|scrape /metrics| Backend
+    Grafana[Grafana] --> Prometheus
+    GitHub --> Actions[Tests, build, Trivy]
+    Actions --> GHCR[GHCR SHA images]
+    GHCR --> Frontend
+    GHCR --> Backend
+    Terraform --> EKS[EKS and VPC]
+    EKS --> Nginx
+    ArgoCD --> Frontend
+    ArgoCD --> Backend
+```
+
+The public controller path uses an internet-facing NLB managed by the AWS Load Balancer Controller. The app Ingress routes `/` and `/api` through ingress-nginx. PostgreSQL is a single persistent StatefulSet in this teaching deployment; its connection URL is read from a Kubernetes Secret. The database migration Job completes before backend replicas update. Prometheus and Grafana remain accessible by port-forward rather than public Ingress.
 
 ## Local architecture
 
@@ -31,6 +68,8 @@ docker compose up --build
 
 Open [http://localhost:3000](http://localhost:3000). Nginx serves the built React app and proxies `/api` to FastAPI. The API docs are at [http://localhost:8000/docs](http://localhost:8000/docs). PostgreSQL is kept on the private Compose network and persisted in the `postgres_data` volume. The backend runs `alembic upgrade head` before Uvicorn starts; health checks make the frontend wait until the API and database are ready.
 
+In the browser, create an incident, assign an owner and severity, advance its status through investigation and mitigation, resolve or reopen it, then edit or delete it. The dashboard summary and filters update from the API. At narrow widths the incident list remains usable; failed API requests show an error, and previously loaded data is marked stale.
+
 The Compose database uses `POSTGRES_HOST_AUTH_METHOD=trust` only for local development. Its port is not published to the host. Use authenticated PostgreSQL with a secret for any shared or cloud deployment.
 
 Stop the stack with `docker compose down`. The database volume remains. `docker compose down -v` also deletes local incident data.
@@ -50,6 +89,8 @@ To repeat the local gates from the project root, run:
 
 ```powershell
 cd backend
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
 .\.venv\Scripts\python.exe -m pytest -v
 cd ..\frontend
 npm ci
@@ -151,6 +192,50 @@ resolved ──► investigating (reopen)
 
 An invalid transition returns HTTP 409. `resolved_at` is set when resolved and cleared when reopened. The initial Alembic migration creates the table and database constraints; the application does not create tables on startup.
 
+## CI/CD and image promotion
+
+The push-to-`main` workflow runs isolated pytest and a Vite production build before either Docker image is built. It scans **both** images with Trivy and fails on `HIGH` or `CRITICAL` vulnerability findings before GHCR login and publication. Both images use the full Git commit SHA as the tag. The workflow publishes images; it does not deploy to AWS. No credentials are committed; GitHub's `GITHUB_TOKEN` is supplied only to the publishing job.
+
+**PENDING live evidence:** a successful Actions URL, pipeline Trivy output, and SHA-tagged GHCR package pages. A local scan or inspected YAML cannot substitute for those screenshots. No GitHub remote is configured yet. The eventual repository owner must allow Actions and package publication; if packages are private, create the namespace's `ghcr-pull` Secret using the guarded script in the runbook.
+
+## Terraform, Kubernetes, and Helm
+
+Terraform defines one VPC, two public and two private subnets across availability zones, internet and NAT routing, EKS, a managed worker node group, the Pod Identity Agent, and the EBS CSI add-on. `terraform.tfvars.example` contains safe example values. Set the operator's actual EKS API access CIDR in an ignored `terraform.tfvars` before an approved live plan. A refresh-free plan using dummy credentials has validated the graph only; it does not confirm AWS permissions, quotas, prices, or successful creation.
+
+After **explicit approval** and a real Terraform apply, follow [DEPLOYMENT.md](DEPLOYMENT.md) in order: verify the cluster context, install the AWS Load Balancer Controller and ingress-nginx, create guarded Secrets, provision PostgreSQL on gp3, install kube-prometheus-stack, then install the app chart with a published SHA tag. The app chart has two frontend replicas, two backend replicas as the HPA minimum, CPU requests, ClusterIP Services, an Ingress, and a one-time Alembic migration Job. Helm validation has been run locally; **PENDING live evidence:** successful install, healthy Pods and PVCs, Services, HPA metrics, and browser access through the public Ingress.
+
+This abbreviated application sequence assumes an **approved** Terraform apply, configured ingress and metrics controllers, and published images. Run the omitted Secret and monitoring steps at the points shown in the full runbook:
+
+```powershell
+kubectl apply -f k8s/namespace.yaml
+# Create the database/GHCR Secrets with the context-checked script in DEPLOYMENT.md.
+kubectl apply -f k8s/storageclass-ebs.yaml
+kubectl apply -f k8s/postgres.yaml
+# Install kube-prometheus-stack and its Grafana Secret as shown in DEPLOYMENT.md.
+$owner = '<lowercase-github-owner>'
+$repo = '<lowercase-github-repository>'
+$sha = '<published-full-40-character-sha>'
+helm upgrade --install signaldesk ./helm/signaldesk -n signaldesk -f ./helm/signaldesk/values-monitoring.yaml --atomic --wait --set-string "global.imageTag=$sha" --set-string "backend.image.repository=ghcr.io/$owner/$($repo)-backend" --set-string "frontend.image.repository=ghcr.io/$owner/$($repo)-frontend"
+```
+
+The runbook contains the complete ordered commands and teardown sequence; do not run this excerpt against an unprepared cluster.
+
+The chart keeps the database and pull credentials in Kubernetes Secrets. The secret scripts require both an expected kubeconfig context and the Terraform cluster ARN, then pin writes to that context. For private GHCR images, the `ghcr-pull` Secret must exist before the migration Job or Pods can pull images.
+
+## Observability and GitOps
+
+The FastAPI `/metrics` endpoint exports request count, latency, incident creation, and status transition metrics. The monitoring values install Prometheus and Grafana with gp3 persistence. The app chart's ServiceMonitor scrapes the backend Service on `/metrics`; the Grafana sidecar imports the SignalDesk dashboard, including an API request-rate panel. Local Compose confirmed the metric endpoint responds, but **PENDING live evidence:** a Prometheus target `UP`, a populated Grafana application panel, and a reachable Grafana UI in the cluster.
+
+After the runbook creates the `monitoring` namespace and guarded Grafana admin Secret, its monitoring install command is `helm upgrade --install kube-prometheus-stack prometheus-community/kube-prometheus-stack -n monitoring -f monitoring/kube-prometheus-stack-values.yaml --wait`. Install it before enabling the app ServiceMonitor.
+
+For the grader's ArgoCD demo, the runbook starts with a manual Helm release so `helm list -n signaldesk` can be shown. It then uninstalls that **application** release before creating the ArgoCD Application. ArgoCD renders the same chart from Git using `values-gitops.yaml`, which must contain **already published** SHA-tagged image references. The migration Job is an ArgoCD `PreSync` hook. The PostgreSQL bootstrap, monitoring stack, controller releases, and Secrets retain their separate owners. **PENDING live evidence:** an ArgoCD `Synced`/`Healthy` application and a Git change that updates its deployed SHA.
+
+## Submission status
+
+The lecturer requires a GitHub repository with at least ten meaningful commits, screenshots or terminal captures for the live stages, a PDF/PPT deck of at least eight slides, and a **mandatory video** presenting the slides first and then a full live walkthrough. This local repository has meaningful commits, but it has no remote. The deck and walkthrough are prepared; the video and all remote/cloud evidence remain pending. Use [demo/EVIDENCE_CHECKLIST.md](demo/EVIDENCE_CHECKLIST.md) to gather actual proof after the approved deployment, then record the video and publish it under `demo/` or as a repository release asset. Never replace a pending item with an offline render or invented screenshot.
+
+The 13-slide PDF is committed as `demo/slides.pdf`. To regenerate it from vector shapes and text, install `PyMuPDF>=1.27,<2` and run `python demo/build_slides.py` from the repository root.
+
 ## Current limitations
 
-Direct startup needs a separately installed PostgreSQL server; Docker Compose provides one for local use. The UI displays the latest 200 records; API pagination is available for older records. No sample incidents are fabricated or seeded. Cloud deployment and live monitoring evidence are planned for later phases.
+Direct startup needs a separately installed PostgreSQL server; Docker Compose provides one for local use. The UI displays the latest 200 records; API pagination is available for older records. No sample incidents are fabricated or seeded. The public NLB example is HTTP only; a real public deployment needs a domain and TLS before carrying sensitive traffic. The in-cluster PostgreSQL is a single instance without a managed backup service, and the Terraform example uses one NAT gateway. Cloud resources incur charges after an approved apply.
