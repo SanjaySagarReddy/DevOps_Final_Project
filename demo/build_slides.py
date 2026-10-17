@@ -61,7 +61,7 @@ def block(page, x, y, w, h, value, size=16, color=MUTED, bold=False):
         raise ValueError(f"Slide {len(doc)} text overflow: {value[:55]!r} ({remaining:.1f})")
 
 
-def base(section, title, subtitle="", pending=True):
+def base(section, title, subtitle="", pending=True, status_text=None):
     page = doc.new_page(width=W, height=H)
     rect(page, 0, 0, W, H, BG)
     rect(page, 0, 0, 12, H, TEAL)
@@ -71,7 +71,7 @@ def base(section, title, subtitle="", pending=True):
         block(page, 50, 107, 850, 44, subtitle, 15, MUTED)
     line(page, 48, 476, 912, 476, PANEL2, 1)
     text(page, 48, 501, section.upper(), 10, MUTED, True)
-    text(page, 610, 501, "LIVE EVIDENCE PENDING" if pending else "LOCAL CHECKS VERIFIED", 10, AMBER if pending else TEAL, True)
+    text(page, 610, 501, status_text or ("LIVE EVIDENCE PENDING" if pending else "LOCAL CHECKS VERIFIED"), 10, AMBER if pending else TEAL, True)
     text(page, 884, 501, f"{len(doc):02d}", 10, MUTED, True)
     return page
 
@@ -139,7 +139,7 @@ block(page, 66, 388, 828, 50, "The local /metrics endpoint returned a live reque
 
 
 # 5 — CI/CD
-page = base("04 / CI and security", "Quality gates before image publication", "Push to main is configured to trigger the workflow. A real GitHub run is pending.")
+page = base("04 / CI and security", "Quality gates before image publication", "A push to main triggered a verified run; tests, builds, and both Trivy scans passed before GHCR publication.", pending=False, status_text="LIVE GITHUB VERIFIED")
 items = [("01  VERIFY", "pytest + Vite build"), ("02  BUILD", "Backend + frontend images"), ("03  SCAN", "Trivy HIGH / CRITICAL"), ("04  PUBLISH", "GHCR full SHA tags")]
 for i, (heading, body) in enumerate(items):
     x = 48 + i * 226
@@ -147,7 +147,7 @@ for i, (heading, body) in enumerate(items):
     if i < 3:
         arrow(page, x + 208, 259, x + 225, MUTED)
 rect(page, 48, 366, 864, 77, PANEL2)
-block(page, 66, 382, 828, 54, "Failing tests or a HIGH/CRITICAL image finding stops publication. Actions URL, pipeline scan output, and GHCR package screenshots are PENDING.", 16, WHITE)
+block(page, 66, 382, 828, 54, "Run #1 (33310e2) passed; both scans found 0 HIGH/CRITICAL findings at that time. Both public GHCR images carry the matching full SHA.", 16, WHITE)
 
 
 # 6 — AWS
@@ -200,31 +200,31 @@ block(page, 51, 386, 856, 62, "The ArgoCD Application is prepared, but Synced/He
 
 
 # 11 — evidence status
-page = base("10 / Evidence integrity", "Prepared configuration is not live proof", "The grading checklist tracks every screenshot, URL, and terminal capture still needed.")
+page = base("10 / Evidence integrity", "Claims follow their evidence", "Local and GitHub proof is captured; AWS and cluster proof remains pending.")
 card(page, 48, 170, 408, 224, "Locally verified", "8 pytest cases and 4 Chrome checks\nThree-service Compose stack\nNon-root application images\nTerraform fmt/validate/offline plan\nHelm render and schema checks", TEAL, 15)
-card(page, 504, 170, 408, 224, "Pending external evidence", "Actions + GHCR SHA packages\nReal AWS plan/apply/destroy\nHealthy EKS, Pods, Ingress\nPrometheus UP + Grafana data\nArgoCD Synced + GitOps change", AMBER, 15)
-block(page, 52, 417, 850, 34, "No screenshots, cloud results, or successful pipeline are fabricated in this deck.", 16, WHITE, True)
+card(page, 504, 170, 408, 224, "Live GitHub / pending cloud", "Actions run #1 succeeded\nBoth Trivy scans: 0 HIGH/CRITICAL\nBoth public GHCR SHA tags\nAWS, EKS, Ingress: pending\nPrometheus, Grafana, ArgoCD: pending", AMBER, 15)
+block(page, 52, 417, 850, 34, "No AWS, cluster, monitoring, ArgoCD, or video success is claimed before verification.", 16, WHITE, True)
 
 
 # 12 — final video
 page = base("11 / Presentation", "The mandatory video starts with these slides", "Then show the complete live path, with actual evidence on screen.")
-card(page, 48, 166, 408, 211, "Video order", "1. Present slide deck first\n2. Incident workflow and tests\n3. Push, Actions, Trivy, GHCR\n4. Terraform and AWS Console\n5. Helm, Ingress, monitoring, ArgoCD", BLUE, 15)
+card(page, 48, 166, 408, 211, "Video order", "1. Present slide deck first\n2. Incident workflow and tests\n3. New commit + push, run, GHCR\n4. Terraform and AWS Console\n5. Helm, Ingress, monitoring, ArgoCD", BLUE, 15)
 card(page, 504, 166, 408, 211, "Evidence to preserve", "Commit history and test output\nRunning Pods, Services, Helm list\nPublic browser route\nPrometheus target + Grafana panel\nArgoCD update and teardown", TEAL, 15)
 block(page, 52, 402, 850, 52, "The video is PENDING until a real deployment exists. The rubric awards zero for the presentation module without it.", 17, AMBER, True)
 
 
 # 13 — lessons
-page = base("12 / Key learnings", "A traceable path needs clear gates and owners", "Next: repository access, a verified pipeline, explicit AWS approval, then live evidence.")
+page = base("12 / Key learnings", "A traceable path needs clear gates and owners", "GitHub and GHCR are verified; explicit AWS approval comes before cluster evidence.")
 card(page, 48, 169, 269, 192, "Quality before release", "Tests and frontend build gate image creation. Trivy gates both image pushes.", BLUE)
 card(page, 346, 169, 269, 192, "One owner per resource", "Terraform owns AWS; Helm bootstraps controllers; ArgoCD owns the app after handoff.", TEAL)
 card(page, 644, 169, 268, 192, "Operations matter", "Guard cluster context, keep Secrets external, migrate once, monitor live, and destroy paid resources.", AMBER)
 rect(page, 48, 385, 864, 61, PANEL2)
-block(page, 66, 399, 824, 43, "The remaining work is verification in real GitHub and AWS environments, not another offline rendering pass.", 17, WHITE)
+block(page, 66, 399, 824, 43, "Remaining: approved AWS deployment, cluster and monitoring proof, ArgoCD sync, and video.", 17, WHITE)
 
 
 if len(doc) != 13:
     raise AssertionError(f"Expected 13 slides, found {len(doc)}")
-doc.set_metadata({"title": "SignalDesk DevOps Final Capstone", "author": "SignalDesk project", "subject": "Prepared capstone presentation; live evidence pending"})
+doc.set_metadata({"title": "SignalDesk DevOps Final Capstone", "author": "SignalDesk project", "subject": "GitHub pipeline verified; AWS deployment and video pending"})
 doc.save(OUT, garbage=4, deflate=True)
 doc.close()
 print(f"Wrote {OUT} with 13 slides")

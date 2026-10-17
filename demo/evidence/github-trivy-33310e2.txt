@@ -1,0 +1,107 @@
+Extracted from the actual GitHub Actions publish-job log; ANSI color codes removed.
+Run: https://github.com/SanjaySagarReddy/DevOps_Final_Project/actions/runs/39001547027
+Job: https://github.com/SanjaySagarReddy/DevOps_Final_Project/actions/runs/39001547027/job/117305420798
+Commit SHA: 33310e27848a4351a9153fb71eda88e56160b530
+
+2026-10-17T04:11:09.2830956Z ##[group]Run trivy image --scanners vuln --severity HIGH,CRITICAL --exit-code 1 --no-progress "$IMAGE"
+2026-10-17T04:11:09.2831357Z trivy image --scanners vuln --severity HIGH,CRITICAL --exit-code 1 --no-progress "$IMAGE"
+2026-10-17T04:11:09.2882625Z shell: /usr/bin/bash -e {0}
+2026-10-17T04:11:09.2882770Z env:
+2026-10-17T04:11:09.2883007Z   IMAGE: ghcr.io/sanjaysagarreddy/devops_final_project-backend:33310e27848a4351a9153fb71eda88e56160b530
+2026-10-17T04:11:09.2883266Z ##[endgroup]
+2026-10-17T04:11:09.3303996Z 2026-10-17T04:11:09Z	INFO	[vulndb] Need to update DB
+2026-10-17T04:11:09.3304458Z 2026-10-17T04:11:09Z	INFO	[vulndb] Downloading vulnerability DB...
+2026-10-17T04:11:09.3304928Z 2026-10-17T04:11:09Z	INFO	[vulndb] Downloading artifact...	repo="mirror.gcr.io/aquasec/trivy-db:2"
+2026-10-17T04:11:13.2432997Z 2026-10-17T04:11:13Z	INFO	[vulndb] Artifact successfully downloaded	repo="mirror.gcr.io/aquasec/trivy-db:2"
+2026-10-17T04:11:13.3007334Z 2026-10-17T04:11:13Z	INFO	[vuln] Vulnerability scanning is enabled
+2026-10-17T04:11:22.6963640Z 2026-10-17T04:11:22Z	WARN	Third-party SBOM may lead to inaccurate vulnerability detection
+2026-10-17T04:11:22.6963994Z 2026-10-17T04:11:22Z	WARN	Recommend using Trivy to generate SBOMs
+2026-10-17T04:11:22.7212898Z 2026-10-17T04:11:22Z	INFO	[python] Licenses acquired from one or more METADATA files may be subject to additional terms. Use `--debug` flag to see all affected packages.
+2026-10-17T04:11:22.7258011Z 2026-10-17T04:11:22Z	INFO	Detected OS	family="alpine" version="3.24.2"
+2026-10-17T04:11:22.7258376Z 2026-10-17T04:11:22Z	INFO	[alpine] Detecting vulnerabilities...	os_version="3.24" repository="3.24" pkg_num=29
+2026-10-17T04:11:22.7268631Z 2026-10-17T04:11:22Z	INFO	Number of language-specific files	num=1
+2026-10-17T04:11:22.7268903Z 2026-10-17T04:11:22Z	INFO	[python-pkg] Detecting vulnerabilities...
+2026-10-17T04:11:22.7275618Z 2026-10-17T04:11:22Z	WARN	Using severities from other vendors for some vulnerabilities. Read https://trivy.dev/docs/v0.76/guide/scanner/vulnerability#severity-selection for details.
+2026-10-17T04:11:22.7430061Z 
+2026-10-17T04:11:22.7430396Z Report Summary
+2026-10-17T04:11:22.7430652Z 
+2026-10-17T04:11:22.7431279Z ┌──────────────────────────────────────────────────────────────────────────────────┬────────────┬─────────────────┐
+2026-10-17T04:11:22.7431829Z │                                      Target                                      │    Type    │ Vulnerabilities │
+2026-10-17T04:11:22.7432396Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+2026-10-17T04:11:22.7433167Z │ ghcr.io/sanjaysagarreddy/devops_final_project-backend:33310e27848a4351a9153fb71- │   alpine   │        0        │
+2026-10-17T04:11:22.7433591Z │ eda88e56160b530 (alpine 3.24.2)                                                  │            │                 │
+2026-10-17T04:11:22.7433979Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+2026-10-17T04:11:22.7434380Z │ usr/local/lib/python3.13/site-packages/alembic-1.20.0.dist-info/METADATA         │ python-pkg │        0        │
+2026-10-17T04:11:22.7434798Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+2026-10-17T04:11:22.7435180Z │ usr/local/lib/python3.13/site-packages/annotated_doc-0.0.5.dist-info/METADATA    │ python-pkg │        0        │
+2026-10-17T04:11:22.7435591Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+2026-10-17T04:11:22.7435991Z │ usr/local/lib/python3.13/site-packages/annotated_types-0.8.0.dist-info/METADATA  │ python-pkg │        0        │
+2026-10-17T04:11:22.7436401Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+2026-10-17T04:11:22.7436972Z │ usr/local/lib/python3.13/site-packages/anyio-4.15.1.dist-info/METADATA           │ python-pkg │        0        │
+2026-10-17T04:11:22.7437378Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+2026-10-17T04:11:22.7437759Z │ usr/local/lib/python3.13/site-packages/click-8.5.0.dist-info/METADATA            │ python-pkg │        0        │
+2026-10-17T04:11:22.7438165Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+2026-10-17T04:11:22.7438548Z │ usr/local/lib/python3.13/site-packages/fastapi-0.143.3.dist-info/METADATA        │ python-pkg │        0        │
+2026-10-17T04:11:22.7439060Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+2026-10-17T04:11:22.7439442Z │ usr/local/lib/python3.13/site-packages/h11-0.16.0.dist-info/METADATA             │ python-pkg │        0        │
+2026-10-17T04:11:22.7439859Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+2026-10-17T04:11:22.7440241Z │ usr/local/lib/python3.13/site-packages/idna-3.20.dist-info/METADATA              │ python-pkg │        0        │
+2026-10-17T04:11:22.7440929Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+2026-10-17T04:11:22.7441524Z │ usr/local/lib/python3.13/site-packages/mako-1.4.3.dist-info/METADATA             │ python-pkg │        0        │
+2026-10-17T04:11:22.7442168Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+2026-10-17T04:11:22.7442794Z │ usr/local/lib/python3.13/site-packages/markupsafe-3.0.4.dist-info/METADATA       │ python-pkg │        0        │
+2026-10-17T04:11:22.7443262Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+2026-10-17T04:11:22.7443652Z │ usr/local/lib/python3.13/site-packages/opentelemetry_api-1.45.1.dist-info/METAD- │ python-pkg │        0        │
+2026-10-17T04:11:22.7444146Z │ ATA                                                                              │            │                 │
+2026-10-17T04:11:22.7444482Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+2026-10-17T04:11:22.7444868Z │ usr/local/lib/python3.13/site-packages/prometheus_client-0.26.0.dist-info/METAD- │ python-pkg │        0        │
+2026-10-17T04:11:22.7445231Z │ ATA                                                                              │            │                 │
+2026-10-17T04:11:22.7445576Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+2026-10-17T04:11:22.7445959Z │ usr/local/lib/python3.13/site-packages/psycopg-3.3.6.dist-info/METADATA          │ python-pkg │        0        │
+2026-10-17T04:11:22.7446365Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+2026-10-17T04:11:22.7446762Z │ usr/local/lib/python3.13/site-packages/psycopg_binary-3.3.6.dist-info/METADATA   │ python-pkg │        0        │
+2026-10-17T04:11:22.7447171Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+2026-10-17T04:11:22.7447556Z │ usr/local/lib/python3.13/site-packages/pydantic-2.14.1.dist-info/METADATA        │ python-pkg │        0        │
+2026-10-17T04:11:22.7447966Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+2026-10-17T04:11:22.7448347Z │ usr/local/lib/python3.13/site-packages/pydantic_core-2.50.1.dist-info/METADATA   │ python-pkg │        0        │
+2026-10-17T04:11:22.7448854Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+2026-10-17T04:11:22.7449237Z │ usr/local/lib/python3.13/site-packages/sqlalchemy-2.1.5.dist-info/METADATA       │ python-pkg │        0        │
+2026-10-17T04:11:22.7449713Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+2026-10-17T04:11:22.7450095Z │ usr/local/lib/python3.13/site-packages/starlette-1.8.0.dist-info/METADATA        │ python-pkg │        0        │
+2026-10-17T04:11:22.7450670Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+2026-10-17T04:11:22.7451060Z │ usr/local/lib/python3.13/site-packages/typing_extensions-4.16.0.dist-info/METAD- │ python-pkg │        0        │
+2026-10-17T04:11:22.7451419Z │ ATA                                                                              │            │                 │
+2026-10-17T04:11:22.7451762Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+2026-10-17T04:11:22.7452151Z │ usr/local/lib/python3.13/site-packages/typing_inspection-0.4.4.dist-info/METADA- │ python-pkg │        0        │
+2026-10-17T04:11:22.7452521Z │ TA                                                                               │            │                 │
+2026-10-17T04:11:22.7452853Z ├──────────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┤
+2026-10-17T04:11:22.7453233Z │ usr/local/lib/python3.13/site-packages/uvicorn-0.54.0.dist-info/METADATA         │ python-pkg │        0        │
+2026-10-17T04:11:22.7453644Z └──────────────────────────────────────────────────────────────────────────────────┴────────────┴─────────────────┘
+2026-10-17T04:11:22.7453859Z Legend:
+2026-10-17T04:11:22.7454071Z - '-': Not scanned
+2026-10-17T04:11:22.7454247Z - '0': Clean (no security findings detected)
+2026-10-17T04:11:22.7454365Z 
+2026-10-17T04:11:22.7493818Z ##[group]Run trivy image --scanners vuln --severity HIGH,CRITICAL --exit-code 1 --no-progress "$IMAGE"
+2026-10-17T04:11:22.7494339Z trivy image --scanners vuln --severity HIGH,CRITICAL --exit-code 1 --no-progress "$IMAGE"
+2026-10-17T04:11:22.7547434Z shell: /usr/bin/bash -e {0}
+2026-10-17T04:11:22.7547586Z env:
+2026-10-17T04:11:22.7547830Z   IMAGE: ghcr.io/sanjaysagarreddy/devops_final_project-frontend:33310e27848a4351a9153fb71eda88e56160b530
+2026-10-17T04:11:22.7548093Z ##[endgroup]
+2026-10-17T04:11:22.8028617Z 2026-10-17T04:11:22Z	INFO	[vuln] Vulnerability scanning is enabled
+2026-10-17T04:11:23.4557066Z 2026-10-17T04:11:23Z	INFO	Detected OS	family="alpine" version="3.24.2"
+2026-10-17T04:11:23.4557623Z 2026-10-17T04:11:23Z	INFO	[alpine] Detecting vulnerabilities...	os_version="3.24" repository="3.24" pkg_num=71
+2026-10-17T04:11:23.4599024Z 2026-10-17T04:11:23Z	INFO	Number of language-specific files	num=0
+2026-10-17T04:11:23.4599853Z 2026-10-17T04:11:23Z	WARN	Using severities from other vendors for some vulnerabilities. Read https://trivy.dev/docs/v0.76/guide/scanner/vulnerability#severity-selection for details.
+2026-10-17T04:11:23.4678886Z 
+2026-10-17T04:11:23.4678977Z Report Summary
+2026-10-17T04:11:23.4679057Z 
+2026-10-17T04:11:23.4679503Z ┌──────────────────────────────────────────────────────────────────────────────────┬────────┬─────────────────┐
+2026-10-17T04:11:23.4679843Z │                                      Target                                      │  Type  │ Vulnerabilities │
+2026-10-17T04:11:23.4680918Z ├──────────────────────────────────────────────────────────────────────────────────┼────────┼─────────────────┤
+2026-10-17T04:11:23.4681552Z │ ghcr.io/sanjaysagarreddy/devops_final_project-frontend:33310e27848a4351a9153fb7- │ alpine │        0        │
+2026-10-17T04:11:23.4682166Z │ 1eda88e56160b530 (alpine 3.24.2)                                                 │        │                 │
+2026-10-17T04:11:23.4682780Z └──────────────────────────────────────────────────────────────────────────────────┴────────┴─────────────────┘
+2026-10-17T04:11:23.4683117Z Legend:
+2026-10-17T04:11:23.4683289Z - '-': Not scanned
+2026-10-17T04:11:23.4683502Z - '0': Clean (no security findings detected)
+2026-10-17T04:11:23.4683671Z 

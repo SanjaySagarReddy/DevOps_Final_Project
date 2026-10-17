@@ -1,8 +1,8 @@
 # SignalDesk grading evidence checklist
 
-Source of requirements: the lecturer's `devsecops-python-main/GRADING.md` and `README.md` in the sibling reference folder. This checklist describes evidence to collect; it is **not** evidence that cloud or GitHub steps have run.
+Source of requirements: the lecturer's `devsecops-python-main/GRADING.md` and `README.md` in the sibling reference folder. Local and GitHub items marked verified below have actual evidence; cloud and video items remain pending.
 
-Status key: **LOCAL VERIFIED** means tested on the developer machine with genuine local captures linked below; **PREPARED** means code or configuration exists and passed local checks; **PENDING LIVE** means a real external service or cluster is required. The local captures were taken on 2026-10-17 from the running Compose stack and a fresh test run. They do not prove any GitHub or cloud operation. Save future live captures under `demo/evidence/` with descriptive names and record URLs in the submission form. Do not commit credentials, kubeconfig files, Terraform state, or screenshots containing secrets.
+Status key: **LOCAL VERIFIED** means tested on the developer machine with genuine local captures; **LIVE VERIFIED** means checked against the actual GitHub service; **PREPARED** means code or configuration passed local checks; **PENDING LIVE** requires a real cloud service or cluster; **PENDING VIDEO** requires the student's recording. The local captures were taken on 2026-10-17 from the running Compose stack and a fresh test run. Save future captures under `demo/evidence/` with descriptive names and record URLs in the submission form. Do not commit credentials, kubeconfig files, Terraform state, or screenshots containing secrets.
 
 ## Local capture index
 
@@ -20,6 +20,20 @@ These are unedited page screenshots from a real headless Chrome run and terminal
 
 Terminal captures: [eight passing pytest cases](evidence/local-pytest-terminal.png) and [three-service Compose build/start](evidence/local-compose-terminal.png).
 
+## Live GitHub capture index
+
+The approved push created public [`main` history](https://github.com/SanjaySagarReddy/DevOps_Final_Project/commits/main/) with at least 14 meaningful commits. [Run #1](https://github.com/SanjaySagarReddy/DevOps_Final_Project/actions/runs/39001547027) completed successfully for full SHA `33310e27848a4351a9153fb71eda88e56160b530`. The exact [backend version](https://github.com/SanjaySagarReddy/DevOps_Final_Project/pkgs/container/devops_final_project-backend/1400483875?tag=33310e27848a4351a9153fb71eda88e56160b530) and [frontend version](https://github.com/SanjaySagarReddy/DevOps_Final_Project/pkgs/container/devops_final_project-frontend/1400484044?tag=33310e27848a4351a9153fb71eda88e56160b530) are public; both manifests were also inspected from GHCR.
+
+| Evidence | Genuine capture |
+|---|---|
+| GitHub commit history | [commits screenshot](evidence/github-commits-33310e2.png) |
+| Completed Actions run and both green jobs | [run screenshot](evidence/github-actions-success-33310e2.png) |
+| Backend GHCR SHA tag | [backend package screenshot](evidence/github-ghcr-backend-33310e2.png) |
+| Frontend GHCR SHA tag | [frontend package screenshot](evidence/github-ghcr-frontend-33310e2.png) |
+| Both actual Trivy scan steps | [terminal capture](evidence/github-trivy-terminal-33310e2.png) and [downloaded job-log excerpt](evidence/github-trivy-33310e2.txt) |
+
+The public Actions page asks viewers to sign in for step logs. The Trivy text file contains both scan-step excerpts extracted from the authenticated [publish job log](https://github.com/SanjaySagarReddy/DevOps_Final_Project/actions/runs/39001547027/job/117305420798), with ANSI color codes removed; the terminal screenshot displays selected original log lines. The [GitHub capture script](../e2e/capture-github-evidence.mjs) produced the four public page screenshots. This baseline push happened **before** video recording, so it does not satisfy the mandatory on-camera push.
+
 ## M1 — Application (10 points)
 
 - [x] **LOCAL VERIFIED:** FastAPI `/health`, incident GET/POST/PUT/DELETE, database migration, React dashboard, and responsive browser workflow exist in `backend/`, `frontend/`, and `docker-compose.yml`.
@@ -32,9 +46,8 @@ Terminal captures: [eight passing pytest cases](evidence/local-pytest-terminal.p
 
 ## M3 — Git and GitHub (5 points)
 
-- [x] **LOCAL VERIFIED:** Git is initialized on `main`, with at least ten meaningful local commits and a `.gitignore` that excludes secrets and generated files. Recheck the count with `git rev-list --count HEAD` before capturing.
-- [ ] **PENDING LIVE:** Add the approved GitHub repository remote and push only after supplying its URL to the agent. Submit the real repository URL; public visibility or instructor access is required.
-- [ ] **PENDING LIVE:** Capture the **GitHub** commit-history page showing at least ten meaningful commits after the approved remote and push exist. The commit history is currently local only.
+- [x] **LIVE VERIFIED:** Git is initialized on `main`, `.gitignore` excludes secrets/generated files, and the approved [GitHub repository](https://github.com/SanjaySagarReddy/DevOps_Final_Project) contains at least 14 meaningful pushed commits.
+- [x] **LIVE VERIFIED:** The [GitHub commit-history screenshot](evidence/github-commits-33310e2.png) visibly lists the meaningful commits on `main`.
 
 ## M4 — Docker and Compose (10 points)
 
@@ -45,14 +58,15 @@ Terminal captures: [eight passing pytest cases](evidence/local-pytest-terminal.p
 ## M5 — GitHub Actions and GHCR (15 points)
 
 - [x] **PREPARED:** `.github/workflows/ci.yml` triggers on push to `main`; pytest and frontend build gate both image builds; images are SHA tagged.
-- [ ] **PENDING LIVE:** During the mandatory video, **make a new commit on `main` and push it** to the approved repository. Show the full SHA from `git rev-parse HEAD`, then wait for the Actions run triggered by that push to finish successfully. Save the run URL and verify `verify` finishes before `publish`.
-- [ ] **PENDING LIVE:** Open both backend and frontend GHCR package pages in the recording and show that **both image tags equal the full SHA of that newly pushed commit**. Capture both pages and retain the published SHA used for Kubernetes and GitOps values.
+- [x] **LIVE VERIFIED:** [Run #1](https://github.com/SanjaySagarReddy/DevOps_Final_Project/actions/runs/39001547027) was triggered by the approved push of SHA `33310e27848a4351a9153fb71eda88e56160b530` and completed successfully. The test/build job completed before the build/scan/publish job; [the run screenshot](evidence/github-actions-success-33310e2.png) shows both green jobs.
+- [x] **LIVE VERIFIED:** Both public GHCR package pages show the same full SHA tag: [backend](evidence/github-ghcr-backend-33310e2.png) and [frontend](evidence/github-ghcr-frontend-33310e2.png). `docker manifest inspect` succeeded for both exact tags.
+- [ ] **PENDING VIDEO:** During the mandatory video, **make another new commit on `main` and push it**, show its full SHA, wait for its own successful Actions run, and show both GHCR packages tagged with that new SHA. The pre-recording baseline run above cannot substitute for this sequence.
 
 ## M6 — Trivy (5 points)
 
 - [x] **PREPARED:** Both images are scanned before login/push with `--severity HIGH,CRITICAL --exit-code 1`.
-- [ ] **PENDING LIVE:** Capture the Trivy output for **both** images from the actual GitHub Actions run. A locally clean scan does not prove the pipeline ran.
-- [ ] **PENDING WRITE-UP:** Add 2–3 sentences about the actual scan result. If clean, explain that no HIGH/CRITICAL findings were reported for those image digests at that scan time; if blocked, explain one CVE and the remediation.
+- [x] **LIVE VERIFIED:** The actual [publish job](https://github.com/SanjaySagarReddy/DevOps_Final_Project/actions/runs/39001547027/job/117305420798) passed both Trivy steps before GHCR login/push. See the [terminal capture](evidence/github-trivy-terminal-33310e2.png) and [exact scan-step log excerpt](evidence/github-trivy-33310e2.txt).
+- [x] **LIVE VERIFIED / WRITE-UP:** On 2026-10-17, Trivy v0.76.0 scanned both SHA `33310e27848a4351a9153fb71eda88e56160b530` images in Actions with `--severity HIGH,CRITICAL --exit-code 1`. It reported zero matching findings in the backend Alpine/Python packages and frontend Alpine packages at that scan time. This result does not cover other severities or future vulnerability database updates.
 
 ## M7 — Terraform and AWS (15 points)
 
@@ -81,6 +95,6 @@ Terminal captures: [eight passing pytest cases](evidence/local-pytest-terminal.p
 
 ## Evidence integrity and remaining blockers
 
-- No GitHub remote or successful Actions/GHCR run has been verified yet. Obtain the repository URL at the agreed final push step; ensure the account can push `main` and GitHub Actions can write packages.
+- GitHub remote, successful Actions run, Trivy scan output, and both GHCR packages are verified above. The separate on-camera commit/push, its run, and its matching images remain pending with the mandatory video.
 - No AWS resources were created in these preparation phases. Obtain explicit deployment approval, suitable AWS credentials/permissions, an actual administrator CIDR, and a cost/teardown window before a live plan/apply.
 - Do not label `helm template`, kubeconform, a dummy-credential plan, or local `/metrics` as proof of live EKS, Prometheus, Grafana, Ingress, or ArgoCD operation.

@@ -2,7 +2,7 @@
 
 SignalDesk tracks service incidents from detection through investigation, mitigation, resolution, and reopening. Each incident has a title, affected service, severity, status, response owner, impact description, and creation, update, and resolution timestamps. The dashboard shows status totals and the latest 200 incidents, with search and filters. The detail drawer supports edits, workflow transitions, and deletion.
 
-The local application, tests, Compose stack, CI workflow, Terraform, Helm chart, monitoring values, and ArgoCD configuration are prepared. **PENDING live evidence:** no GitHub remote or successful Actions run, GHCR publication, AWS resources, Kubernetes deployment, Prometheus target, Grafana panel, public Ingress, or ArgoCD sync has been verified. The mandatory presentation video must be recorded after a real deployment. Local rendering and the dummy-credential Terraform plan establish configuration validity, not live AWS proof.
+The local application, tests, Compose stack, Terraform, Helm chart, monitoring values, and ArgoCD configuration are prepared. The approved push to [GitHub](https://github.com/SanjaySagarReddy/DevOps_Final_Project) produced a [successful Actions run](https://github.com/SanjaySagarReddy/DevOps_Final_Project/actions/runs/39001547027), two clean HIGH/CRITICAL Trivy scan steps, and public backend/frontend GHCR images tagged with full commit SHA `33310e27848a4351a9153fb71eda88e56160b530`. **PENDING live evidence:** AWS resources, Kubernetes deployment, Prometheus target, Grafana panel, public Ingress, and ArgoCD sync. The mandatory presentation video must still show a separate new commit and push on camera after a real deployment. Local rendering and the dummy-credential Terraform plan establish configuration validity, not live AWS proof.
 
 The [deployment runbook](DEPLOYMENT.md) describes the approved deployment sequence and ownership. The [grading evidence checklist](demo/EVIDENCE_CHECKLIST.md) links genuine local browser, pytest, and Compose captures and tracks the remaining live artifacts; the [walkthrough script](demo/WALKTHROUGH.md) orders the eventual live demo. The [PDF slide deck](demo/slides.pdf) is the presentation visual; it contains no claimed live screenshots.
 
@@ -102,7 +102,7 @@ trivy image --scanners vuln --severity HIGH,CRITICAL --exit-code 1 --no-progress
 trivy image --scanners vuln --severity HIGH,CRITICAL --exit-code 1 --no-progress signaldesk-frontend:ci
 ```
 
-Trivy must be installed locally for those last two commands. A live Actions run and GHCR publication require a GitHub repository remote and permission to push `main`; the repository or organization must allow Actions and GHCR package writes by `GITHUB_TOKEN`.
+Trivy must be installed locally for those last two commands. The approved GitHub repository and push permission are now verified: Actions completed and `GITHUB_TOKEN` published both packages. Future pushes to `main` will run the same gates.
 
 Install test dependencies in a backend virtual environment, then run the isolated API suite:
 
@@ -196,7 +196,7 @@ An invalid transition returns HTTP 409. `resolved_at` is set when resolved and c
 
 The push-to-`main` workflow runs isolated pytest and a Vite production build before either Docker image is built. It scans **both** images with Trivy and fails on `HIGH` or `CRITICAL` vulnerability findings before GHCR login and publication. Both images use the full Git commit SHA as the tag. The workflow publishes images; it does not deploy to AWS. No credentials are committed; GitHub's `GITHUB_TOKEN` is supplied only to the publishing job.
 
-**PENDING live evidence:** a successful Actions URL, pipeline Trivy output, and SHA-tagged GHCR package pages. A local scan or inspected YAML cannot substitute for those screenshots. No GitHub remote is configured yet. The eventual repository owner must allow Actions and package publication; if packages are private, create the namespace's `ghcr-pull` Secret using the guarded script in the runbook.
+**LIVE VERIFIED:** [run #1](https://github.com/SanjaySagarReddy/DevOps_Final_Project/actions/runs/39001547027) completed successfully for SHA `33310e27848a4351a9153fb71eda88e56160b530`. The public [backend version](https://github.com/SanjaySagarReddy/DevOps_Final_Project/pkgs/container/devops_final_project-backend/1400483875?tag=33310e27848a4351a9153fb71eda88e56160b530) and [frontend version](https://github.com/SanjaySagarReddy/DevOps_Final_Project/pkgs/container/devops_final_project-frontend/1400484044?tag=33310e27848a4351a9153fb71eda88e56160b530) show that exact tag. The [evidence checklist](demo/EVIDENCE_CHECKLIST.md) links genuine screenshots and both Trivy step outputs. A separate on-camera commit/push and matching run/images remain pending for the mandatory video.
 
 ## Terraform, Kubernetes, and Helm
 
@@ -232,7 +232,7 @@ For the grader's ArgoCD demo, the runbook starts with a manual Helm release so `
 
 ## Submission status
 
-The lecturer requires a GitHub repository with at least ten meaningful commits, screenshots or terminal captures for the live stages, a PDF/PPT deck of at least eight slides, and a **mandatory video** presenting the slides first and then a full live walkthrough. This local repository has meaningful commits, but it has no remote. The deck, walkthrough, and local browser/test/Compose captures are prepared; the video and all remote/cloud evidence remain pending. The recording script requires a **new commit and push to `main` on camera**, then a completed Actions run and both GHCR images bearing that exact full SHA. Use [demo/EVIDENCE_CHECKLIST.md](demo/EVIDENCE_CHECKLIST.md) to gather actual proof after the approved deployment, then record the video and publish it under `demo/` or as a repository release asset. Never replace a pending item with an offline render or invented screenshot.
+The lecturer requires a GitHub repository with at least ten meaningful commits, screenshots or terminal captures for the live stages, a PDF/PPT deck of at least eight slides, and a **mandatory video** presenting the slides first and then a full live walkthrough. The public [repository](https://github.com/SanjaySagarReddy/DevOps_Final_Project) contains more than ten meaningful commits, and local browser/test/Compose plus live GitHub/Trivy/GHCR captures are in [demo/EVIDENCE_CHECKLIST.md](demo/EVIDENCE_CHECKLIST.md). The video and all AWS/cluster evidence remain pending. The recording script requires a **new commit and push to `main` on camera**, then that commit's completed Actions run and both GHCR images bearing its exact full SHA. Gather actual cloud proof only after the approved deployment, then record the video and publish it under `demo/` or as a repository release asset. Never replace a pending item with an offline render or invented screenshot.
 
 The 13-slide PDF is committed as `demo/slides.pdf`. To regenerate it from vector shapes and text, install `PyMuPDF>=1.27,<2` and run `python demo/build_slides.py` from the repository root.
 

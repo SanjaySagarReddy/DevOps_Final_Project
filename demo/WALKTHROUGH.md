@@ -4,10 +4,10 @@
 
 ## Before recording
 
-1. Have an approved GitHub repository remote and permission to push to `main`. Prepare a small, reviewed change to a tracked documentation or source file, but leave it **uncommitted and unpushed** for the recording. Keep a previously published image SHA available for the initial live deployment; the new video commit will be a separate pipeline demonstration.
+1. Use the approved [GitHub repository](https://github.com/SanjaySagarReddy/DevOps_Final_Project) and confirm permission to push to `main` during recording. Prepare a small, reviewed change to a tracked documentation or source file, but leave it **uncommitted and unpushed** for the recording. The previously published baseline SHA `33310e27848a4351a9153fb71eda88e56160b530` is available for the initial live deployment; the new video commit will be a separate pipeline demonstration.
 2. Agree on the AWS cost window and approval; replace the example EKS API CIDR, confirm AWS identity and region, and prepare a secure state location. Follow the runbook to create the cluster and install the controller, Secrets, database, monitoring stack, and app. Record real plan/apply output when performed.
 3. Open the local app, GitHub Actions, GHCR packages, AWS Console, Kubernetes terminal, Prometheus Targets, Grafana dashboard, and ArgoCD UI. Keep the app's manual Helm release in place until its `helm list` evidence is captured.
-4. Rehearse the full sequence once without recording. Keep the planned video change uncommitted after rehearsal. Put actual screenshots and URLs in the evidence checklist; the committed captures under `demo/evidence/` prove only local runs.
+4. Rehearse the full sequence once without recording. Keep the planned video change uncommitted after rehearsal. Put actual screenshots and URLs in the evidence checklist; its capture labels distinguish local runs, verified GitHub steps, and pending cloud proof.
 
 ## Recording order
 

@@ -1,6 +1,6 @@
 # Deployment runbook (prepared, not executed)
 
-This is a prepared runbook, not a record of a live deployment. No Terraform apply, EKS cluster, Kubernetes workload, or GHCR image has been created for this project yet.
+This is a prepared runbook, not a record of a live AWS deployment. The approved GitHub push created two public SHA-tagged GHCR images, but no Terraform apply, EKS cluster, or Kubernetes workload has been created for this project yet. See the root README and evidence checklist for the verified image SHA and run URL.
 
 ## Ownership and order
 
