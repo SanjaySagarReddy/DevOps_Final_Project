@@ -1,0 +1,8 @@
+﻿Captured 2026-10-17 16:58:39 +05:30
+$ kubectl get pods -n signaldesk
+NAME                                   READY   STATUS    RESTARTS   AGE
+signaldesk-backend-67599cf97d-7wjtr    1/1     Running   0          3h56m
+signaldesk-backend-67599cf97d-f25mb    1/1     Running   0          3h56m
+signaldesk-frontend-64c77bd8db-prbdq   1/1     Running   0          3h56m
+signaldesk-frontend-64c77bd8db-vpwjd   1/1     Running   0          3h56m
+signaldesk-postgresql-0                1/1     Running   0          4h40m

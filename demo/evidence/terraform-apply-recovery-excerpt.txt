@@ -1,0 +1,38 @@
+Archived approved Terraform apply and recovery, 2026-10-17, ap-southeast-2
+Sources: ignored .tools/signaldesk-apply.log and signaldesk-recovery-apply.log
+Actual resource creation lines; AWS resource IDs omitted.
+First apply created the network and EKS but t3.large worker launch was rejected by this account.
+The failed node group was removed; the recovery apply used m7i-flex.large.
+
+First apply: completed resource creations before the node group error
+aws_iam_role.cluster: Creation complete after 2s [resource ID omitted]
+aws_iam_role.ebs_csi: Creation complete after 2s [resource ID omitted]
+aws_iam_role.nodes: Creation complete after 2s [resource ID omitted]
+aws_iam_role_policy_attachment.ebs_csi: Creation complete after 0s [resource ID omitted]
+aws_iam_role_policy_attachment.nodes["AmazonEKSWorkerNodePolicy"]: Creation complete after 0s [resource ID omitted]
+aws_iam_role_policy_attachment.cluster: Creation complete after 0s [resource ID omitted]
+aws_iam_role_policy_attachment.nodes["AmazonEC2ContainerRegistryPullOnly"]: Creation complete after 1s [resource ID omitted]
+aws_iam_role_policy_attachment.nodes["AmazonEKS_CNI_Policy"]: Creation complete after 1s [resource ID omitted]
+aws_vpc.main: Creation complete after 6s [resource ID omitted]
+aws_route_table.private: Creation complete after 3s [resource ID omitted]
+aws_internet_gateway.main: Creation complete after 3s [resource ID omitted]
+aws_subnet.private["ap-southeast-2b"]: Creation complete after 4s [resource ID omitted]
+aws_route_table.public: Creation complete after 5s [resource ID omitted]
+aws_eip.nat: Creation complete after 2s [resource ID omitted]
+aws_subnet.private["ap-southeast-2a"]: Creation complete after 6s [resource ID omitted]
+aws_route.public_default: Creation complete after 2s [resource ID omitted]
+aws_subnet.public["ap-southeast-2b"]: Creation complete after 15s [resource ID omitted]
+aws_subnet.public["ap-southeast-2a"]: Creation complete after 15s [resource ID omitted]
+aws_route_table_association.public["ap-southeast-2b"]: Creation complete after 1s [resource ID omitted]
+aws_route_table_association.public["ap-southeast-2a"]: Creation complete after 1s [resource ID omitted]
+aws_nat_gateway.main: Creation complete after 1m30s [resource ID omitted]
+aws_route.private_default: Creation complete after 3s [resource ID omitted]
+aws_route_table_association.private["ap-southeast-2b"]: Creation complete after 3s [resource ID omitted]
+aws_route_table_association.private["ap-southeast-2a"]: Creation complete after 3s [resource ID omitted]
+aws_eks_cluster.main: Creation complete after 8m41s [resource ID omitted]
+
+Recovery apply: successful replacement node group and add-ons
+aws_eks_node_group.main: Creation complete after 1m13s [resource ID omitted]
+aws_eks_addon.pod_identity_agent: Creation complete after 17s [resource ID omitted]
+aws_eks_addon.ebs_csi: Creation complete after 40s [resource ID omitted]
+Apply complete! Resources: 3 added, 0 changed, 0 destroyed.

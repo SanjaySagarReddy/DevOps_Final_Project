@@ -36,6 +36,20 @@ These are unedited Chrome page screenshots through the public AWS NLB. [The capt
 
 [Live cluster command output](evidence/live-cluster-verification.txt) records two Ready nodes, running application and PostgreSQL Pods, Services, Ingress, HPA, bound PVC, ServiceMonitor, deployed controller releases, and the ArgoCD sync status and image SHA. [The actual pre-handoff Helm terminal output](evidence/manual-helm-before-argocd.txt) shows the `signaldesk` release deployed with healthy Pods before ArgoCD took ownership. An on-camera live `helm list` demonstration would require reinstalling the manual release after first removing the ArgoCD Application.
 
+## Command-output capture index
+
+These PNGs render genuine archived or newly captured command output in a readable terminal-style frame. They are labeled as rendered captures, not native terminal-window screenshots. The Terraform excerpts omit the operator's EKS API CIDR and AWS resource IDs; the original full logs and plan stay in ignored `.tools/`. The original 28-resource plan preceded an account rejection of `t3.large`; the separate recovery apply completed with `m7i-flex.large`.
+
+| Rubric evidence | Capture | Text source |
+|---|---|---|
+| Original nonempty Terraform plan | [plan screenshot](evidence/terraform-original-plan-excerpt.png) | [sanitized excerpt](evidence/terraform-original-plan-excerpt.txt) |
+| Approved Terraform apply and successful recovery | [apply screenshot](evidence/terraform-apply-recovery-excerpt.png) | [sanitized excerpt](evidence/terraform-apply-recovery-excerpt.txt) |
+| Live EKS, node group, VPC and four subnets | [AWS CLI screenshot](evidence/live-aws-cli-proof.png) | [AWS CLI output](evidence/live-aws-cli-proof.txt) |
+| Running application Pods | [Pods screenshot](evidence/live-kubectl-pods.png) | [kubectl output](evidence/live-kubectl-pods.txt) |
+| Application ClusterIP Services | [Services screenshot](evidence/live-kubectl-services.png) | [kubectl output](evidence/live-kubectl-services.txt) |
+| Manual Helm release before ArgoCD handoff | [Helm screenshot](evidence/live-helm-list-before-argocd.png) | [archived Helm output](evidence/live-helm-list-before-argocd.txt) |
+| Backend `/metrics` through a local port-forward | [metrics screenshot](evidence/live-backend-metrics.png) | [curl output excerpt](evidence/live-backend-metrics.txt) |
+
 Monitoring and GitOps UI captures from authenticated local port-forwards: [Prometheus Targets with both SignalDesk endpoints UP](evidence/live-prometheus-targets.png), [Grafana dashboard with request-rate and p95 data after 100 successful API reads](evidence/live-grafana-dashboard.png), and [ArgoCD application Synced/Healthy at commit `3a780f9`](evidence/live-argocd-signaldesk.png). The browser automation used credentials only from ignored local recovery data or the in-cluster Secret; no credentials are stored in these screenshots or scripts.
 
 ## Live GitHub capture index
@@ -91,19 +105,20 @@ The public Actions page asks viewers to sign in for step logs. The Trivy text fi
 - [x] **PREPARED:** Valid Terraform in `terraform/`, including the VPC, two public subnets, EKS, worker nodes, and `terraform.tfvars.example`. A dummy-credential, refresh-free local plan showed 28 resources to add; it is **not a live AWS plan**.
 - [x] **LIVE VERIFIED:** Approved Terraform init, validation, and real plan in `ap-southeast-2` succeeded. The original plan proposed 28 creations and no changes or destroys; the administrator EKS API CIDR was a verified public IPv4 `/32`. The first apply's `t3.large` node group was rejected by this account; the failed group was removed and an approved recovery apply created `signaldesk-workers-v2` with two `m7i-flex.large` nodes. A later refresh-based plan reported no changes. Private Terraform state and the actual CIDR are excluded from Git.
 - [x] **LIVE VERIFIED:** The VPC, two public and two private subnets, EKS cluster, worker group, EBS CSI, and Pod Identity Agent exist; two nodes are Ready in [cluster output](evidence/live-cluster-verification.txt).
-- [ ] **PENDING CAPTURE:** Save genuine AWS Console screenshots of the VPC/subnets, EKS cluster, and node group, plus a sanitized terminal capture of the real Terraform plan/apply. Do not expose the operator `/32`, account secrets, or Terraform state.
+- [x] **LIVE VERIFIED:** The [original real Terraform plan capture](evidence/terraform-original-plan-excerpt.png) shows 28 planned creations; the [apply/recovery capture](evidence/terraform-apply-recovery-excerpt.png) shows actual AWS creations and successful worker/add-on recovery. Both are redacted excerpts from archived output, with the full logs retained locally outside Git. The [AWS CLI capture](evidence/live-aws-cli-proof.png) verifies the active EKS cluster, worker group, VPC, and four subnets in Sydney.
+- [ ] **PENDING CONSOLE:** Capture actual AWS Console pages for the VPC/subnets and EKS cluster/node group. AWS CLI proof is available above, but it does not replace the rubric's Console screenshot requirement.
 - [ ] **PENDING TEARDOWN:** After the demo and backup, capture successful `terraform destroy` and verify no paid NLB/EBS/EKS resources remain. Follow the runbook teardown order.
 
 ## M8 — Kubernetes and Helm (15 points)
 
 - [x] **PREPARED:** Namespace/bootstrap YAML and SignalDesk Helm chart render and validate locally. The chart defines two frontend replicas, a backend HPA minimum of two, two ClusterIP Services, `/` and `/api` Ingress routes, and a one-time migration Job.
-- [x] **LIVE VERIFIED:** [Cluster output](evidence/live-cluster-verification.txt) shows two backend Pods, two frontend Pods, PostgreSQL, ClusterIP Services, Ingress, HPA with CPU metrics, and a bound gp3 PVC. The manual Helm release and one-time migration were verified before handoff; ArgoCD owns the application now.
+- [x] **LIVE VERIFIED:** [Pods screenshot](evidence/live-kubectl-pods.png) shows two backend Pods, two frontend Pods, and PostgreSQL Running. [Services screenshot](evidence/live-kubectl-services.png) shows backend and frontend ClusterIP Services. [Cluster output](evidence/live-cluster-verification.txt) also records Ingress, HPA with CPU metrics, and a bound gp3 PVC. ArgoCD owns the application now.
 - [x] **LIVE VERIFIED:** [Desktop/mobile browser captures](#live-eks-browser-capture-index) and API checks passed through the real public NLB.
-- [x] **LIVE VERIFIED:** [Pre-handoff Helm terminal output](evidence/manual-helm-before-argocd.txt) shows the deployed manual release and healthy app resources. `helm list -n signaldesk` is now empty because ArgoCD owns the chart resources; explain this sequence in the video.
+- [x] **LIVE VERIFIED:** [Pre-handoff Helm capture](evidence/live-helm-list-before-argocd.png) and [archived output](evidence/manual-helm-before-argocd.txt) show the deployed manual release and healthy app resources. `helm list -n signaldesk` is now empty because ArgoCD owns the chart resources; explain this sequence in the video.
 
 ## M9 — Prometheus and Grafana (10 points)
 
-- [x] **LOCAL VERIFIED / PREPARED:** `/metrics` returned Prometheus text locally; a rendered ServiceMonitor targets `/metrics`, and the dashboard JSON contains live request-rate and latency queries. This is not a cluster scrape result.
+- [x] **LIVE VERIFIED:** [Live backend metrics screenshot](evidence/live-backend-metrics.png) shows Prometheus-formatted `/metrics` output from a real backend Pod reached through a local port-forward with `curl.exe`. The ServiceMonitor targets that endpoint.
 - [x] **LIVE VERIFIED:** Prometheus API queries through a local port-forward showed both SignalDesk backend targets `UP` and 12 `incident_http_requests_total` series after real browser/API traffic.
 - [x] **LIVE VERIFIED:** Grafana API through a local port-forward reported a healthy database, Prometheus datasource, and the provisioned **SignalDesk incident API** dashboard.
 - [x] **LIVE VERIFIED:** [Prometheus Targets screenshot](evidence/live-prometheus-targets.png) shows both backend targets `UP`; [Grafana dashboard screenshot](evidence/live-grafana-dashboard.png) shows populated request-rate and p95 latency panels after 100 successful API reads through the NLB.

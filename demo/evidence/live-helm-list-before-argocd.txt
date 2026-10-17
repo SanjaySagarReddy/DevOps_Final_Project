@@ -1,0 +1,5 @@
+﻿Archived live output captured before ArgoCD handoff, 2026-10-17
+$ helm list -n signaldesk
+NAME      	NAMESPACE 	REVISION	UPDATED                            	STATUS  	CHART           	APP VERSION
+signaldesk	signaldesk	1       	2026-10-17 12:51:42.90056 +0530 IST	deployed	signaldesk-0.1.0	0.1.0
+The manual release was removed before ArgoCD took ownership.

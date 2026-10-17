@@ -1,0 +1,7 @@
+﻿Captured 2026-10-17 16:58:39 +05:30
+$ kubectl get svc -n signaldesk
+NAME                             TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+signaldesk-backend               ClusterIP   172.20.87.146   <none>        8000/TCP   4h1m
+signaldesk-frontend              ClusterIP   172.20.219.79   <none>        8080/TCP   4h1m
+signaldesk-postgresql            ClusterIP   172.20.21.1     <none>        5432/TCP   4h40m
+signaldesk-postgresql-headless   ClusterIP   None            <none>        5432/TCP   4h40m

@@ -1,0 +1,20 @@
+﻿Captured from live backend through kubectl port-forward
+$ curl.exe -sS http://127.0.0.1:8000/metrics
+[Relevant lines from full Prometheus exposition output]
+# HELP incident_http_requests_total HTTP requests handled by the incident API
+# TYPE incident_http_requests_total counter
+incident_http_requests_total{method="GET",route="/ready",status_code="200"} 4294.0
+incident_http_requests_total{method="GET",route="/api/incidents",status_code="200"} 32.0
+incident_http_requests_total{method="GET",route="/health",status_code="200"} 1.0
+incident_http_requests_total{method="GET",route="/api/incidents/summary",status_code="200"} 27.0
+incident_http_requests_total{method="POST",route="/api/incidents",status_code="201"} 4.0
+incident_http_requests_total{method="PUT",route="/api/incidents/{incident_id}",status_code="200"} 14.0
+incident_http_requests_total{method="DELETE",route="/api/incidents/{incident_id}",status_code="204"} 4.0
+# HELP incident_http_request_duration_seconds Incident API request duration in seconds
+# TYPE incident_http_request_duration_seconds histogram
+# HELP incident_http_request_duration_seconds_created Incident API request duration in seconds
+# TYPE incident_http_request_duration_seconds_created gauge
+# HELP incident_created_total Incidents created
+# TYPE incident_created_total counter
+# HELP incident_status_transitions_total Incident workflow transitions
+# TYPE incident_status_transitions_total counter

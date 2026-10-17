@@ -1,0 +1,54 @@
+﻿Live AWS CLI inspection; account credentials and EKS administrator CIDR are omitted.
+$ aws eks describe-cluster --name signaldesk-eks --region ap-southeast-2 --query cluster.{Name:name,Status:status,Version:version}
+{
+    "Name": "signaldesk-eks",
+    "Status": "ACTIVE",
+    "Version": "1.36"
+}
+
+$ aws eks describe-nodegroup --cluster-name signaldesk-eks --nodegroup-name signaldesk-workers-v2 --region ap-southeast-2
+{
+    "Name": "signaldesk-workers-v2",
+    "Status": "ACTIVE",
+    "Desired": 2,
+    "InstanceTypes": [
+        "m7i-flex.large"
+    ]
+}
+
+$ aws ec2 describe-vpcs --filters Name=vpc-id,Values=<Terraform VPC ID> --region ap-southeast-2
+[
+    {
+        "VpcId": "vpc-0da36cdb1b0e373cd",
+        "State": "available",
+        "Cidr": "10.50.0.0/16"
+    }
+]
+
+$ aws ec2 describe-subnets --filters Name=vpc-id,Values=<Terraform VPC ID> --region ap-southeast-2
+[
+    {
+        "SubnetId": "subnet-03d8575bf62d1c22e",
+        "AvailabilityZone": "ap-southeast-2a",
+        "PublicIpOnLaunch": false,
+        "State": "available"
+    },
+    {
+        "SubnetId": "subnet-048e1fe5235d863f4",
+        "AvailabilityZone": "ap-southeast-2b",
+        "PublicIpOnLaunch": false,
+        "State": "available"
+    },
+    {
+        "SubnetId": "subnet-0d5810b28ea80a537",
+        "AvailabilityZone": "ap-southeast-2b",
+        "PublicIpOnLaunch": true,
+        "State": "available"
+    },
+    {
+        "SubnetId": "subnet-02408d038bf395ec8",
+        "AvailabilityZone": "ap-southeast-2a",
+        "PublicIpOnLaunch": true,
+        "State": "available"
+    }
+]

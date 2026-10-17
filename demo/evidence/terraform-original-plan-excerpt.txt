@@ -1,0 +1,35 @@
+Archived original approved Terraform plan, 2026-10-17, ap-southeast-2
+Source: ignored .tools/signaldesk-approved-plan-output.txt (real plan output)
+Selected resource headings and summary only; operator EKS API CIDR omitted.
+The original t3.large node group failed account eligibility; recovery used m7i-flex.large.
+
+# aws_eip.nat will be created
+# aws_eks_addon.ebs_csi will be created
+# aws_eks_addon.pod_identity_agent will be created
+# aws_eks_cluster.main will be created
+# aws_eks_node_group.main will be created
+# aws_iam_role.cluster will be created
+# aws_iam_role.ebs_csi will be created
+# aws_iam_role.nodes will be created
+# aws_iam_role_policy_attachment.cluster will be created
+# aws_iam_role_policy_attachment.ebs_csi will be created
+# aws_iam_role_policy_attachment.nodes["AmazonEC2ContainerRegistryPullOnly"] will be created
+# aws_iam_role_policy_attachment.nodes["AmazonEKSWorkerNodePolicy"] will be created
+# aws_iam_role_policy_attachment.nodes["AmazonEKS_CNI_Policy"] will be created
+# aws_internet_gateway.main will be created
+# aws_nat_gateway.main will be created
+# aws_route.private_default will be created
+# aws_route.public_default will be created
+# aws_route_table.private will be created
+# aws_route_table.public will be created
+# aws_route_table_association.private["ap-southeast-2a"] will be created
+# aws_route_table_association.private["ap-southeast-2b"] will be created
+# aws_route_table_association.public["ap-southeast-2a"] will be created
+# aws_route_table_association.public["ap-southeast-2b"] will be created
+# aws_subnet.private["ap-southeast-2a"] will be created
+# aws_subnet.private["ap-southeast-2b"] will be created
+# aws_subnet.public["ap-southeast-2a"] will be created
+# aws_subnet.public["ap-southeast-2b"] will be created
+# aws_vpc.main will be created
+
+Plan: 28 to add, 0 to change, 0 to destroy.
