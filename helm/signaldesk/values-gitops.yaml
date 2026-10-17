@@ -1,6 +1,6 @@
 # Public GHCR images from the successful push-to-main run at this full SHA.
 global:
-  imageTag: "a218eb246f1b9f2839fc4f8be7215147a3552a5a"
+  imageTag: "49e3313a4729eb8056ec01e15669ac389eea1897"
 
 imagePullSecrets: []
 
