@@ -56,14 +56,14 @@ Create the controller IAM policy from the [versioned upstream policy](https://do
 ```powershell
 New-Item -ItemType Directory -Force .tools | Out-Null
 $policyFile = Join-Path (Resolve-Path .tools) 'aws-load-balancer-controller-iam-policy.json'
-Invoke-WebRequest 'https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.14.1/docs/install/iam_policy.json' -OutFile $policyFile
+Invoke-WebRequest 'https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.14.0/docs/install/iam_policy.json' -OutFile $policyFile
 $policyArn = aws iam create-policy --policy-name SignalDeskAWSLoadBalancerController --policy-document "file://$policyFile" --query 'Policy.Arn' --output text
 kubectl create serviceaccount aws-load-balancer-controller -n kube-system
 eksctl create podidentityassociation --cluster $cluster --region $region --namespace kube-system --service-account-name aws-load-balancer-controller --permission-policy-arns $policyArn
 eksctl get podidentityassociation --cluster $cluster --region $region --namespace kube-system --service-account-name aws-load-balancer-controller
 ```
 
-Then install the AWS controller, ingress-nginx, and Metrics Server. For a controller chart upgrade, first apply its [current CRDs](https://docs.aws.amazon.com/eks/latest/userguide/lbc-helm.html), because Helm upgrade does not update them automatically. The pinned chart version below matches the versioned IAM policy above; review versions together before a future upgrade.
+Then install the AWS controller, ingress-nginx, and Metrics Server. For a controller chart upgrade, first apply its [current CRDs](https://docs.aws.amazon.com/eks/latest/userguide/lbc-helm.html), because Helm upgrade does not update them automatically. The pinned AWS controller chart `1.14.0` declares controller app version `v2.14.0`, matching the versioned IAM policy above. Review both versions together before a future upgrade.
 
 ```powershell
 helm repo add eks https://aws.github.io/eks-charts
