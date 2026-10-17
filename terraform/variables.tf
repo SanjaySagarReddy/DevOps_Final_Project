@@ -12,13 +12,13 @@ variable "project_name" {
 variable "aws_region" {
   description = "AWS region for the VPC and EKS cluster."
   type        = string
-  default     = "ap-south-1"
+  default     = "ap-southeast-2"
 }
 
 variable "availability_zones" {
   description = "Two availability zones in aws_region, in a stable order."
   type        = list(string)
-  default     = ["ap-south-1a", "ap-south-1b"]
+  default     = ["ap-southeast-2a", "ap-southeast-2b"]
 
   validation {
     condition     = length(var.availability_zones) >= 2 && length(distinct(var.availability_zones)) == length(var.availability_zones)
