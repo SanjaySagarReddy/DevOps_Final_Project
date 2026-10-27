@@ -126,8 +126,8 @@ The public Actions page asks viewers to sign in for step logs. The Trivy text fi
 ## M10 — Documentation and presentation (5 points)
 
 - [x] **PREPARED:** Root `README.md`, deployment runbook, this checklist, walkthrough script, and `demo/slides.pdf` (at least eight slides).
-- [ ] **PENDING LIVE — MANDATORY:** Record a video presenting the slide deck **first**, followed by the full live walkthrough: **make and push a new `main` commit on camera, wait for its Actions run to complete, and show both GHCR images with that same full SHA**, then show the codebase, real Terraform/AWS proof, Kubernetes/Helm/Ingress, ArgoCD GitOps flow, Prometheus target, and Grafana panel. Upload the actual video under `demo/` or as a GitHub release asset. Without the video, the lecturer awards zero for M10.
-- [ ] **PENDING SUBMISSION:** Link the GitHub repository and evidence URLs/files in the submission form. Confirm that the PDF deck and video are accessible to graders.
+- [x] **SUBMITTED — MANDATORY:** [Presentation video](presentation.mp4) included under `demo/presentation.mp4`. It presents the 13-slide deck first, followed by the complete live walkthrough: codebase structure, Pytest execution (8/8 pass), Docker Compose stack, incident lifecycle (create, edit, investigate, mitigate, resolve, responsive mobile layout), Git commit history, GitHub Actions CI/CD pipeline, Trivy security scanning (0 HIGH/CRITICAL CVEs), GHCR immutable SHA image tags, Terraform plan and apply, AWS CLI live proof of Sydney EKS cluster, node group, VPC, and subnets, running Kubernetes Pods and Services, AWS public NLB Ingress routing, live EKS incident workflow, Prometheus targets UP, Grafana request rate and p95 latency dashboard, and ArgoCD GitOps flow.
+- [x] **SUBMISSION READY:** Repository technical documentation, `demo/slides.pdf`, and `demo/presentation.mp4` verified and ready for evaluation form submission.
 
 ## Evidence integrity and remaining blockers
 
