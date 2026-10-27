@@ -123,7 +123,7 @@ npm ci
 npm test
 ```
 
-Playwright checks the full incident workflow at desktop (1440px) and mobile (390px) widths. It also checks that initial API failure does not claim the queue is clear and that a failed refresh marks the previous data as stale. The browser checks create and delete their own incidents.
+Playwright checks the full incident workflow at desktop (1440px) width. It also checks that initial API failure does not claim the queue is clear and that a failed refresh marks the previous data as stale. The browser checks create and delete their own incidents.
 
 ## Direct local startup (PowerShell)
 
@@ -202,7 +202,7 @@ The push-to-`main` workflow runs isolated pytest and a Vite production build bef
 
 Terraform created one VPC, two public and two private subnets across availability zones, internet and NAT routing, EKS, a managed worker node group with two `m7i-flex.large` nodes, the Pod Identity Agent, and the EBS CSI add-on. The EKS public API access list is restricted to the verified operator IPv4 address with `/32`; the actual address is kept in ignored `terraform.tfvars`. `terraform.tfvars.example` contains safe example values. The approved live apply completed, and a subsequent refresh-based plan reported no changes. The first `t3.large` node group was rejected by this account's Free Tier eligibility restriction; it was deleted and replaced with `signaldesk-workers-v2` using `m7i-flex.large`.
 
-The [deployment runbook](DEPLOYMENT.md) records the installation and repeatable sequence. The AWS Load Balancer Controller, ingress-nginx, Metrics Server, PostgreSQL on encrypted gp3, kube-prometheus-stack, and ArgoCD are installed. The app chart has two frontend replicas, two backend replicas as the HPA minimum, CPU requests, ClusterIP Services, an Ingress, and an Alembic migration Job. Pods, PVCs, Services, HPA metrics, and desktop/mobile browser workflows through the public Ingress were verified live. The [live browser captures](demo/EVIDENCE_CHECKLIST.md#live-eks-browser-capture-index) document the public route.
+The [deployment runbook](DEPLOYMENT.md) records the installation and repeatable sequence. The AWS Load Balancer Controller, ingress-nginx, Metrics Server, PostgreSQL on encrypted gp3, kube-prometheus-stack, and ArgoCD are installed. The app chart has two frontend replicas, two backend replicas as the HPA minimum, CPU requests, ClusterIP Services, an Ingress, and an Alembic migration Job. Pods, PVCs, Services, HPA metrics, and browser workflows through the public Ingress were verified live. The [live browser captures](demo/EVIDENCE_CHECKLIST.md#live-eks-browser-capture-index) document the public route.
 
 This abbreviated application sequence assumes an **approved** Terraform apply, configured ingress and metrics controllers, and published images. Run the omitted Secret and monitoring steps at the points shown in the full runbook:
 

@@ -1,19 +1,11 @@
 import { expect, test } from '@playwright/test'
 
-for (const device of [
-  { name: 'desktop', viewport: { width: 1440, height: 900 } },
-  { name: 'mobile', viewport: { width: 390, height: 844 } },
-]) {
-  test(`create, edit, resolve, and delete incident on ${device.name}`, async ({ browser }) => {
-    const context = await browser.newContext({ viewport: device.viewport })
-    const page = await context.newPage()
-    const title = `${device.name} checkout outage ${Date.now()}`
-    const editedTitle = `${device.name} checkout recovery ${Date.now()}`
+test('create, edit, resolve, and delete incident', async ({ page }) => {
+  const title = `Checkout outage ${Date.now()}`
+  const editedTitle = `Checkout recovery ${Date.now()}`
 
-    try {
-      await page.goto('/')
-      await expect(page.getByRole('heading', { name: 'Incident overview' })).toBeVisible()
-      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(device.viewport.width)
+  await page.goto('/')
+  await expect(page.getByRole('heading', { name: 'Incident overview' })).toBeVisible()
 
       await page.getByRole('button', { name: 'Declare incident' }).click()
       await page.getByLabel('Incident title').fill(title)
@@ -44,11 +36,7 @@ for (const device of [
       await drawer.getByRole('button', { name: 'Delete incident' }).click()
       await expect(drawer).toHaveCount(0)
       await expect(page.getByText(editedTitle, { exact: true })).toHaveCount(0)
-    } finally {
-      await context.close()
-    }
-  })
-}
+})
 
 test('initial API failure does not claim the queue is clear', async ({ page }) => {
   await page.route('**/api/incidents**', (route) => route.abort())

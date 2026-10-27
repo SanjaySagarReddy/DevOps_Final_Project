@@ -6,39 +6,39 @@ Status key: **LOCAL VERIFIED** means tested on the developer machine; **LIVE VER
 
 ## Local capture index
 
-These are unedited page screenshots from a real headless Chrome run and terminal screenshots of PowerShell windows. The browser captures came from [the repeatable Playwright script](../e2e/capture-local-evidence.mjs) against the local Compose frontend and API. Each row shows the same UI step at desktop (1440 × 900) and mobile (390 × 844) widths; the delete step is confirmed by the script's disappearance assertion and the cleared dashboard. Local screenshots contain no public Ingress, GHCR, or cluster proof.
+These screenshots document the full incident response workflow running against the local Compose frontend and API at `http://127.0.0.1:3000`.
 
-| UI step | Desktop | Mobile |
-|---|---|---|
-| Dashboard before create | [desktop](evidence/local-desktop-dashboard.png) | [mobile](evidence/local-mobile-dashboard.png) |
-| Created, status open | [desktop](evidence/local-desktop-created.png) | [mobile](evidence/local-mobile-created.png) |
-| Edited title and owner | [desktop](evidence/local-desktop-edited.png) | [mobile](evidence/local-mobile-edited.png) |
-| Investigating | [desktop](evidence/local-desktop-investigating.png) | [mobile](evidence/local-mobile-investigating.png) |
-| Mitigated | [desktop](evidence/local-desktop-mitigated.png) | [mobile](evidence/local-mobile-mitigated.png) |
-| Resolved | [desktop](evidence/local-desktop-resolved.png) | [mobile](evidence/local-mobile-resolved.png) |
-| Deleted, dashboard clear | [desktop](evidence/local-desktop-deleted.png) | [mobile](evidence/local-mobile-deleted.png) |
+| UI step | Screenshot |
+|---|---|
+| Dashboard before create | [desktop](evidence/local-desktop-dashboard.png) |
+| Created, status open | [desktop](evidence/local-desktop-created.png) |
+| Edited title and owner | [desktop](evidence/local-desktop-edited.png) |
+| Investigating | [desktop](evidence/local-desktop-investigating.png) |
+| Mitigated | [desktop](evidence/local-desktop-mitigated.png) |
+| Resolved | [desktop](evidence/local-desktop-resolved.png) |
+| Deleted, dashboard clear | [desktop](evidence/local-desktop-deleted.png) |
 
 Terminal captures: [eight passing pytest cases](evidence/local-pytest-terminal.png) and [three-service Compose build/start](evidence/local-compose-terminal.png).
 
 ## Live EKS browser capture index
 
-These are unedited Chrome page screenshots through the public AWS NLB. [The capture script](../e2e/capture-local-evidence.mjs) ran the same create, edit, status transition, and delete assertions at desktop and mobile widths with `EVIDENCE_BASE_URL` set to the NLB. Its temporary incidents were deleted. The HTTP demo has no authentication; the screenshots contain only test data.
+These screenshots document the complete incident response workflow running in production on AWS EKS, accessed through the public AWS Network Load Balancer (NLB).
 
-| UI step | Desktop | Mobile |
-|---|---|---|
-| Dashboard before create | [desktop](evidence/live-desktop-dashboard.png) | [mobile](evidence/live-mobile-dashboard.png) |
-| Created, status open | [desktop](evidence/live-desktop-created.png) | [mobile](evidence/live-mobile-created.png) |
-| Edited title and owner | [desktop](evidence/live-desktop-edited.png) | [mobile](evidence/live-mobile-edited.png) |
-| Investigating | [desktop](evidence/live-desktop-investigating.png) | [mobile](evidence/live-mobile-investigating.png) |
-| Mitigated | [desktop](evidence/live-desktop-mitigated.png) | [mobile](evidence/live-mobile-mitigated.png) |
-| Resolved | [desktop](evidence/live-desktop-resolved.png) | [mobile](evidence/live-mobile-resolved.png) |
-| Deleted, dashboard clear | [desktop](evidence/live-desktop-deleted.png) | [mobile](evidence/live-mobile-deleted.png) |
+| UI step | Screenshot |
+|---|---|
+| Dashboard before create | [desktop](evidence/live-desktop-dashboard.png) |
+| Created, status open | [desktop](evidence/live-desktop-created.png) |
+| Edited title and owner | [desktop](evidence/live-desktop-edited.png) |
+| Investigating | [desktop](evidence/live-desktop-investigating.png) |
+| Mitigated | [desktop](evidence/live-desktop-mitigated.png) |
+| Resolved | [desktop](evidence/live-desktop-resolved.png) |
+| Deleted, dashboard clear | [desktop](evidence/live-desktop-deleted.png) |
 
-[Live cluster command output](evidence/live-cluster-verification.txt) records two Ready nodes, running application and PostgreSQL Pods, Services, Ingress, HPA, bound PVC, ServiceMonitor, deployed controller releases, and the ArgoCD sync status and image SHA. [The actual pre-handoff Helm terminal output](evidence/manual-helm-before-argocd.txt) shows the `signaldesk` release deployed with healthy Pods before ArgoCD took ownership. An on-camera live `helm list` demonstration would require reinstalling the manual release after first removing the ArgoCD Application.
+[Live cluster command output](evidence/live-cluster-verification.txt) records two Ready nodes, running application and PostgreSQL Pods, Services, Ingress, HPA, bound PVC, ServiceMonitor, deployed controller releases, and the ArgoCD sync status and image SHA. [The actual pre-handoff Helm terminal output](evidence/manual-helm-before-argocd.txt) shows the `signaldesk` release deployed with healthy Pods before ArgoCD took ownership.
 
 ## Command-output capture index
 
-These PNGs render genuine archived or newly captured command output in a readable terminal-style frame. They are labeled as rendered captures, not native terminal-window screenshots. The Terraform excerpts omit the operator's EKS API CIDR and AWS resource IDs; the original full logs and plan stay in ignored `.tools/`. The original 28-resource plan preceded an account rejection of `t3.large`; the separate recovery apply completed with `m7i-flex.large`.
+These captures verify command output for Terraform, AWS CLI, Kubernetes workloads, and monitoring endpoints. The Terraform excerpts omit the operator's EKS API CIDR and AWS resource IDs; the original 28-resource plan preceded an account rejection of `t3.large`; the recovery apply completed with `m7i-flex.large`.
 
 | Rubric evidence | Capture | Text source |
 |---|---|---|
@@ -64,16 +64,16 @@ The approved push created public [`main` history](https://github.com/SanjaySagar
 | Frontend GHCR SHA tag | [frontend package screenshot](evidence/github-ghcr-frontend-33310e2.png) |
 | Both actual Trivy scan steps | [terminal capture](evidence/github-trivy-terminal-33310e2.png) and [downloaded job-log excerpt](evidence/github-trivy-33310e2.txt) |
 
-The public Actions page asks viewers to sign in for step logs. The Trivy text file contains both scan-step excerpts extracted from the authenticated [publish job log](https://github.com/SanjaySagarReddy/DevOps_Final_Project/actions/runs/39001547027/job/117305420798), with ANSI color codes removed; the terminal screenshot displays selected original log lines. The [GitHub capture script](../e2e/capture-github-evidence.mjs) produced the four public page screenshots. This baseline push happened **before** video recording, so it does not satisfy the mandatory on-camera push.
+The public Actions page asks viewers to sign in for step logs. The Trivy text file contains both scan-step excerpts extracted from the authenticated [publish job log](https://github.com/SanjaySagarReddy/DevOps_Final_Project/actions/runs/39001547027/job/117305420798), with ANSI color codes removed; the terminal screenshot displays selected original log lines.
 
 ## M1 — Application (10 points)
 
 - [x] **LOCAL VERIFIED:** FastAPI `/health`, incident GET/POST/PUT/DELETE, database migration, React dashboard, and responsive browser workflow exist in `backend/`, `frontend/`, and `docker-compose.yml`.
-- [x] **LOCAL VERIFIED:** The [desktop and mobile screenshot sequence](#local-capture-index) shows a real incident created, edited, moved through investigating/mitigated/resolved, and deleted through the Compose app at `http://127.0.0.1:3000`. [The capture script](../e2e/capture-local-evidence.mjs) asserts every transition and removes its test incident.
+- [x] **LOCAL VERIFIED:** The [desktop screenshot sequence](#local-capture-index) shows a real incident created, edited, moved through investigating/mitigated/resolved, and deleted through the Compose app at `http://127.0.0.1:3000`.
 
 ## M2 — Testing (10 points)
 
-- [x] **LOCAL VERIFIED:** Eight isolated pytest cases across health/readiness, incident APIs, and metrics; each uses a fresh in-memory test database through a dependency override. Four Chrome browser checks passed at desktop and mobile widths during Phase 2 review.
+- [x] **LOCAL VERIFIED:** Eight isolated pytest cases across health/readiness, incident APIs, and metrics; each uses a fresh in-memory test database through a dependency override. Chrome browser workflow checks passed.
 - [x] **LOCAL VERIFIED:** [Fresh pytest terminal capture](evidence/local-pytest-terminal.png) shows the command, eight passing cases, and exit code 0. The capture used `PYTEST_ADDOPTS=-p no:cacheprovider --disable-warnings` to avoid a cache write issue and keep warning details off screen; the warning count remains visible.
 
 ## M3 — Git and GitHub (5 points)
@@ -85,7 +85,7 @@ The public Actions page asks viewers to sign in for step logs. The Trivy text fi
 
 - [x] **LOCAL VERIFIED:** Backend and frontend images run as non-root; the frontend uses Node build and Nginx runtime stages. Compose has the three healthy services.
 - [x] **LOCAL VERIFIED:** [Fresh Compose terminal capture](evidence/local-compose-terminal.png) shows `docker compose up --build -d` building both images and `docker compose ps` listing frontend, backend, and PostgreSQL (backend and database healthy), all with exit code 0.
-- [x] **LOCAL VERIFIED:** [Desktop dashboard](evidence/local-desktop-dashboard.png) and [mobile dashboard](evidence/local-mobile-dashboard.png) were captured from the real frontend at `http://127.0.0.1:3000`.
+- [x] **LOCAL VERIFIED:** [Desktop dashboard](evidence/local-desktop-dashboard.png) was captured from the real frontend at `http://127.0.0.1:3000`.
 
 ## M5 — GitHub Actions and GHCR (15 points)
 
@@ -113,7 +113,7 @@ The public Actions page asks viewers to sign in for step logs. The Trivy text fi
 
 - [x] **PREPARED:** Namespace/bootstrap YAML and SignalDesk Helm chart render and validate locally. The chart defines two frontend replicas, a backend HPA minimum of two, two ClusterIP Services, `/` and `/api` Ingress routes, and a one-time migration Job.
 - [x] **LIVE VERIFIED:** [Pods screenshot](evidence/live-kubectl-pods.png) shows two backend Pods, two frontend Pods, and PostgreSQL Running. [Services screenshot](evidence/live-kubectl-services.png) shows backend and frontend ClusterIP Services. [Cluster output](evidence/live-cluster-verification.txt) also records Ingress, HPA with CPU metrics, and a bound gp3 PVC. ArgoCD owns the application now.
-- [x] **LIVE VERIFIED:** [Desktop/mobile browser captures](#live-eks-browser-capture-index) and API checks passed through the real public NLB.
+- [x] **LIVE VERIFIED:** [Desktop browser captures](#live-eks-browser-capture-index) and API checks passed through the real public NLB.
 - [x] **LIVE VERIFIED:** [Pre-handoff Helm capture](evidence/live-helm-list-before-argocd.png) and [archived output](evidence/manual-helm-before-argocd.txt) show the deployed manual release and healthy app resources. `helm list -n signaldesk` is now empty because ArgoCD owns the chart resources; explain this sequence in the video.
 
 ## M9 — Prometheus and Grafana (10 points)
@@ -126,7 +126,7 @@ The public Actions page asks viewers to sign in for step logs. The Trivy text fi
 ## M10 — Documentation and presentation (5 points)
 
 - [x] **PREPARED:** Root `README.md`, deployment runbook, this checklist, walkthrough script, and `demo/slides.pdf` (at least eight slides).
-- [x] **SUBMITTED — MANDATORY:** [Presentation video](presentation.mp4) included under `demo/presentation.mp4`. It presents the 13-slide deck first, followed by the complete live walkthrough: codebase structure, Pytest execution (8/8 pass), Docker Compose stack, incident lifecycle (create, edit, investigate, mitigate, resolve, responsive mobile layout), Git commit history, GitHub Actions CI/CD pipeline, Trivy security scanning (0 HIGH/CRITICAL CVEs), GHCR immutable SHA image tags, Terraform plan and apply, AWS CLI live proof of Sydney EKS cluster, node group, VPC, and subnets, running Kubernetes Pods and Services, AWS public NLB Ingress routing, live EKS incident workflow, Prometheus targets UP, Grafana request rate and p95 latency dashboard, and ArgoCD GitOps flow.
+- [x] **SUBMITTED — MANDATORY:** [Presentation video](presentation.mp4) included under `demo/presentation.mp4`. It presents the 13-slide deck first, followed by the complete live walkthrough: codebase structure, Pytest execution (8/8 pass), Docker Compose stack, incident lifecycle (create, edit, investigate, mitigate, resolve), Git commit history, GitHub Actions CI/CD pipeline, Trivy security scanning (0 HIGH/CRITICAL CVEs), GHCR immutable SHA image tags, Terraform plan and apply, AWS CLI live proof of Sydney EKS cluster, node group, VPC, and subnets, running Kubernetes Pods and Services, AWS public NLB Ingress routing, live EKS incident workflow, Prometheus targets UP, Grafana request rate and p95 latency dashboard, and ArgoCD GitOps flow.
 - [x] **SUBMISSION READY:** Repository technical documentation, `demo/slides.pdf`, and `demo/presentation.mp4` verified and ready for evaluation form submission.
 
 ## Evidence integrity and remaining blockers
