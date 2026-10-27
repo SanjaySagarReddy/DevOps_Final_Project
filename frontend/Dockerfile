@@ -9,6 +9,8 @@ RUN npm run build
 
 FROM nginx:stable-alpine
 
+RUN apk update && apk upgrade --no-cache
+
 COPY --from=build /app/dist /usr/share/nginx/html
 COPY nginx.conf.template /etc/nginx/nginx.conf.template
 COPY start-nginx.sh /usr/local/bin/start-nginx
